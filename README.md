@@ -11,3 +11,14 @@ and after DOM injection / removal.
 
 Event listeners are delegated via the excellent
 [delegate](https://www.npmjs.com/package/delegate) library.
+
+## Install
+
+```
+yarn add @designory/yamodal
+# or npm install @designory/yamodal
+```
+
+## License
+
+[MIT](./LICENSE)
