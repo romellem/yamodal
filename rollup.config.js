@@ -4,9 +4,11 @@ import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+import multiInput from 'rollup-plugin-multi-input';
+import filesize from 'rollup-plugin-filesize';
 
 const commonConfig = {
-	input: 'src/index.js',
+	input: 'src/yamodal.js',
 	output: {
 		name: 'yamodal',
 		sourcemap: true,
@@ -41,6 +43,9 @@ const umdConfig = Object.assign({}, commonConfig);
 umdConfig.output = Object.assign({}, commonConfig.output, {
 	file: 'dist/umd/yamodal.js',
 	format: 'umd',
+	// globals: {
+	// 	delegate: 'delegate'
+	// }
 });
 umdConfig.plugins = [
 	...commonConfig.plugins,
@@ -58,19 +63,35 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
 });
 umdProdConfig.plugins = [...umdConfig.plugins, terser()];
 
+// // Recipes
+// const recipesCjsConfig = {
+// 	input: 'src/recipes/**/*.js',
+// 	output: {
+// 		dir: 'dist/cjs',
+// 		format: 'cjs',
+// 		sourcemap: true,
+// 	},
+// 	plugins: [multiInput({ relative: 'src' }), ...esmConfig.plugins],
+// };
+// const recipesEsmConfig = Object.assign({}, recipesCjsConfig);
+// recipesEsmConfig.output = Object.assign({}, recipesCjsConfig.output, {
+// 	dir: 'dist/esm',
+// 	format: 'esm',
+// });
+
 let configurations = [];
 if (process.env.SERVE) {
 	const serveConfig = Object.assign({}, commonConfig);
-	serveConfig.input = 'render/index.js';
+	serveConfig.input = 'examples/examples.js';
 	serveConfig.output = Object.assign({}, commonConfig.output, {
-		file: 'dist/render/yamodal.iife.js',
+		file: 'dist/examples.iife.js',
 		format: 'iife',
 	});
 	serveConfig.plugins = [...umdConfig.plugins];
 	serveConfig.plugins.push(
 		serve({
 			open: true,
-			contentBase: ['dist'],
+			contentBase: ['public', 'dist'],
 			host: 'localhost',
 			port: '3030',
 		}),
@@ -81,7 +102,18 @@ if (process.env.SERVE) {
 	);
 	configurations.push(serveConfig);
 } else {
-	configurations.push(esmConfig, esmProdConfig, umdConfig, umdProdConfig);
+	configurations.push(
+		esmConfig,
+		esmProdConfig,
+		umdConfig,
+		umdProdConfig
+		// ,recipesCjsConfig,
+		// recipesEsmConfig
+	);
+
+	for (let configuration of configurations) {
+		configuration.plugins.push(filesize({ showMinifiedSize: false }));
+	}
 }
 
 export default configurations;

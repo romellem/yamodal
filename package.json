@@ -1,6 +1,6 @@
 {
   "name": "yamodal",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Yet Another Modal",
   "main": "dist/umd/yamodal.js",
   "module": "dist/esm/yamodal.esm.js",
@@ -17,7 +17,9 @@
     "@rollup/plugin-commonjs": "^11.0.0",
     "@rollup/plugin-node-resolve": "^7.1.0",
     "rollup": "^2.9.0",
+    "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-livereload": "^1.0.4",
+    "rollup-plugin-multi-input": "^1.1.1",
     "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-terser": "^5.1.3"
   },
@@ -28,5 +30,8 @@
   "files": [
     "dist/umd/",
     "dist/esm/"
-  ]
+  ],
+  "dependencies": {
+    "delegate": "^3.2.0"
+  }
 }
