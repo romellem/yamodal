@@ -19,6 +19,31 @@ yarn add @designory/yamodal
 # or npm install @designory/yamodal
 ```
 
+### Usage
+
+### Options
+
+#### Option `template`
+#### Option `context`
+#### Option `trigger_selector`
+#### Option `close_selector`
+#### Option `onAppend(modal_node, trigger_node, event)`
+#### Option `beforeInsertIntoDom(modal_node, trigger_node, event)`
+#### Option `afterInsertIntoDom(modal_node, trigger_node, event)`
+#### Option `removeModalAfterTransition`
+#### Option `beforeRemoveFromDom(modal_node, close_node, event)`
+#### Option `afterRemoveFromDom(modal_node, close_node, event)`
+#### Option `onAfterSetup(modal_node, { isOpen, open, close, destroy })`
+#### Option `onDestroy(modal_node)`
+
+### Return Value
+
+#### Return `modal_node`
+#### Return `isOpen()`
+#### Return `open(event = { delegateTarget: null })`
+#### Return `close(event = { delegateTarget: null })`
+#### Return `destroy()`
+
 ## License
 
 [MIT](./LICENSE)
