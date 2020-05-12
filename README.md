@@ -21,6 +21,27 @@ yarn add @designory/yamodal
 
 ### Usage
 
+#### When using a bundler like webpack, rollup, parcel, browserify, etc.:
+
+```js
+import yamodal from '@designory/yamodal';
+
+let yamodalInstance = yamodal({
+    // Options here...
+});
+```
+
+#### When using the UMD bundle directly in the browser:
+
+```html
+<script src="https://unpkg.com/@designory/yamodal@0.1.0/dist/umd/yamodal.min.js"></script>
+<script>
+var yamodalInstance = window.yamodal({
+    // Options here...
+});
+</script>
+```
+
 ### Options
 
 #### Option `template`
