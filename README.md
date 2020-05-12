@@ -101,6 +101,68 @@ yamodal({
 ```
 
 #### Option `template`
+
+The only **required** option. It must be a function that returns an HTML string
+that contains a _single_ DOM node. If more than one node is returned, only
+the first node is selected as the `modal_node`.
+
+```js
+yamodal({
+    template: () => `<div>Hello world!</div>`,
+});
+```
+
+You can use whatever templating library you want here as well. As long as the
+function returns an HTML string that contains a single DOM node, it'll work!
+
+##### Handlebars Template
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
+<script>
+    var template = Handlebars.compile("<div>Handlebars <b>{{doesWhat}}</b></div>");
+    yamodal({
+        template: template,
+        context: { doesWhat: "rocks!" },
+    });
+</script>
+```
+
+##### React (ReactDOMServer) Template
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.13.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.13.1/umd/react-dom-server.browser.production.min.js"></script>
+<script>
+    // const Modal = (props) => <div>Hello {props.name} <button data-modal-close>×</button></div>;
+    // renderToString(<Modal name="world!" />);
+    var Modal = function Modal(props) {
+        return React.createElement(
+            "div",
+            null, 
+            "Hello ", 
+            props.name, 
+            " ", 
+            React.createElement(
+                "button",
+                { "data-modal-close": true },
+                "×"
+            )
+        );
+    };
+    var template = function(context) {
+        return ReactDOMServer.renderToString(
+            React.createElement(Modal, context)
+        );
+    };
+    yamodal({
+        template: template,
+        context: { name: "world!" },
+    });
+});
+</script>
+```
+
 #### Option `context`
 #### Option `trigger_selector`
 #### Option `close_selector`
