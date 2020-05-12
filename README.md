@@ -164,6 +164,26 @@ function returns an HTML string that contains a single DOM node, it'll work!
 ```
 
 #### Option `context`
+
+Any value that is passed to the `template` function. If `context` is itself
+a function, its return value is passed to our template. Additionally, when a
+`context()` function is used, we recreate our `modal_node` just prior to opening
+(it is executed before the `beforeInsertIntoDom` callback).
+
+```js
+yamodal({
+    template: (context) => `<div>This won't change between modal opens: ${context}</div>`,
+    context: Math.random(),
+});
+```
+
+```js
+yamodal({
+    template: (context) => `<div>This <em>will</em> change between modal opens: ${context}</div>`,
+    context: () => Math.random(),
+});
+```
+
 #### Option `trigger_selector`
 #### Option `close_selector`
 #### Option `onAppend(modal_node, trigger_node, event)`
