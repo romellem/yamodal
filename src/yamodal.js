@@ -91,7 +91,8 @@ const initializeModalListener = ({
 			return;
 		}
 
-		let trigger_node = event.delegateTarget;
+		// @todo Consider using optional chaining
+		let trigger_node = event && event.delegateTarget;
 
 		if (typeof context === fn) {
 			modal_node = createModalNode();
@@ -143,7 +144,8 @@ const initializeModalListener = ({
 			return;
 		}
 
-		let close_node = event.delegateTarget;
+		// @todo Consider using optional chaining
+		let close_node = event && event.delegateTarget;
 		if (typeof beforeRemoveFromDom === fn) {
 			// If `beforeRemoveFromDom` returns `false` exactly, bail early
 			let bail_check = beforeRemoveFromDom(modal_node, close_node, event);
@@ -173,11 +175,11 @@ const initializeModalListener = ({
 		get modal_node() {
 			return modal_node;
 		},
-		open(e = { delegateTarget: null }) {
-			return onTriggerOpen(e);
+		open(event) {
+			return onTriggerOpen(event);
 		},
-		close(e = { delegateTarget: null }) {
-			return onTriggerClose(e);
+		close(event) {
+			return onTriggerClose(event);
 		},
 		isOpen() {
 			return isOpen;
@@ -200,7 +202,7 @@ const initializeModalListener = ({
 
 		// @see https://www.npmjs.com/package/delegate#with-a-single-base-element-default-or-specified
 		trigger_delegation.destroy();
-		close_delegation.destroy();
+		close_delegation && close_delegation.destroy();
 
 		if (typeof onDestroy === fn) {
 			onDestroy(modal_node);
