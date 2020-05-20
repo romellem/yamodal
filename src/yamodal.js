@@ -13,7 +13,7 @@ import delegate from 'delegate';
  * @param {Function} [opt.onAppend] Optional function to append our modal to the DOM. Called with two arguments: `modal_node` and `trigger_node`. Defaults to `document.body.appendChild(modal_node)`.
  * @param {Function} [opt.beforeInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`. If this function returns `false`, modal will _not_ be injected and we bail early.
  * @param {Function} [opt.afterInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`.
- * @param {Boolean} [opt.removeModalAfterTransition] When false, element is removed immediately from DOM. Otherwise, element is removed after a 'transitionend' event has fired on the `modal_node`. Defaults to false.
+ * @param {String} [opt.remove_modal_after_event_type] When set, the modal is not removed until this event is fired. Otherwise modal is removed immediately from DOM. Some useful event types are 'transitionend' and 'animationend'.
  * @param {Function} [opt.beforeRemoveFromDom] Optional function that runs before removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`. If this function returns `false`, modal will _not_ be removed and we bail early.
  * @param {Function} [opt.afterRemoveFromDom] Optional function that runs after removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`.
  * @param {Function} [opt.onAfterSetup] Optional function that runs once after all event listeners have been setup. Called with `modal_node` and an object with `isOpen`, `open`, `close`, and `destroy` methods.
@@ -29,7 +29,7 @@ const initializeModalListener = ({
 	onAppend,
 	afterInsertIntoDom,
 	beforeInsertIntoDom,
-	removeModalAfterTransition,
+	remove_modal_after_event_type,
 	beforeRemoveFromDom,
 	afterRemoveFromDom,
 	onAfterSetup,
@@ -107,6 +107,16 @@ const initializeModalListener = ({
 		}
 	};
 
+	const removeModal = (modal_node, close_node, event) => {
+		modal_node.parentNode.removeChild(modal_node);
+
+		isOpen = false;
+
+		if (typeof afterRemoveFromDom === fn) {
+			afterRemoveFromDom(modal_node, close_node, event);
+		}
+	};
+
 	const onTriggerClose = function onTriggerClose(event) {
 		if (!isOpen) {
 			return;
@@ -121,25 +131,13 @@ const initializeModalListener = ({
 			}
 		}
 
-		if (removeModalAfterTransition) {
-			once(modal_node, 'transitionend', function onTransitionEnd() {
-				modal_node.parentNode.removeChild(modal_node);
-
-				isOpen = false;
-
-				if (typeof afterRemoveFromDom === fn) {
-					afterRemoveFromDom(modal_node, close_node, event);
-				}
+		if (remove_modal_after_event_type) {
+			once(modal_node, remove_modal_after_event_type, function onEventBeforeRemoval() {
+				removeModal(modal_node, close_node, event);
 			});
 		} else {
 			// Default is to remove modal immediately
-			modal_node.parentNode.removeChild(modal_node);
-
-			isOpen = false;
-
-			if (typeof afterRemoveFromDom === fn) {
-				afterRemoveFromDom(modal_node, close_node, event);
-			}
+			removeModal(modal_node, close_node, event);
 		}
 	};
 

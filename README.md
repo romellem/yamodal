@@ -78,10 +78,10 @@ yamodal({
     // Called with three arguments: `modal_node`, `trigger_node`, and the opening `event`.
     afterInsertIntoDom(modal_node, trigger_node, event){ ... },
 
-    // When false, element is immediately removed from the DOM on close.
-    // Otherwise, element is removed after a 'transitionend' event has fired on the `modal_node`.
-    // Defaults to false.
-    removeModalAfterTransition,
+    // When set, the modal is not removed until that event is fired.
+    // Otherwise modal is removed immediately from DOM.
+    // Some useful event types are 'transitionend' and 'animationend'.
+    remove_modal_after_event_type,
 
     // Optional function that runs before removing the modal from the DOM.
     // If this returns `false`, will prevent the modal from being removed from the DOM.
@@ -302,18 +302,18 @@ yamodal({
 
 Gets called with `modal_node`, `trigger_node`, and the delegated click `event` as arguments.
 
-#### Option `removeModalAfterTransition`
+#### Option `remove_modal_after_event_type`
 
-_Type:_ `Boolean`
+_Type:_ `String`
 
-When `false`, the modal node is removed from the DOM immediately after the `beforeRemoveFromDom`
-callback. Otherwise, if this is `true`, then a the node is removed only _after_
-a `transitionend` event is emitted from the modal.
+When a string is passed to this option, the modal will listen for this event to be emitted
+from the modal node before it is removed from the DOM. Otherwise, the modal node is removed
+from the DOM immediately.
 
 This is useful (read: needed) if we want to perform some CSS transition (like a fade out)
 on the modal before it is removed.
 
-Defaults to `false`.
+Some typical event types you might pass in here are `'transitionend'` and `'animationend'`.
 
 #### Option `beforeRemoveFromDom(modal_node, close_node, event)`
 
@@ -325,14 +325,15 @@ provides an opportunity to _bail early_ and prevent the modal from closing.
 If `beforeRemoveFromDom` returns `false`, our close handler exits early before
 removing the modal from the DOM.
 
-> Note: If you use this to fade out your modal, you'll want to set
-> `removeModalAfterTransition` to `true`. Otherwise, your modal
-> will be removed from the DOM before its transition is finished!
+> Note: If you use this to fade out your modal, you'll want to pass
+> in a event in `remove_modal_after_event_type` (e.g., `'transitionend'`).
+> Otherwise, your modal will be removed from the DOM before its transition
+> is finished!
 
 ```js
 yamodal({
     template: () => `<div style="transition: opacity 1s;">...</div>`,
-    removeModalAfterTransition: true,
+    remove_modal_after_event_type: 'transitionend',
     beforeRemoveFromDom(modal_node) {
         modal_node.style.opacity = '0';
         // Force layout calc (see https://gist.github.com/paulirish/5d52fb081b3570c81e3a)
