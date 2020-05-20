@@ -174,6 +174,7 @@ const initializeModalListener = ({
 		rtn_object.destroy = noop;
 		rtn_object.open = noop;
 		rtn_object.close = noop;
+		rtn_object.isOpen = noop;
 
 		// @see https://www.npmjs.com/package/delegate#with-a-single-base-element-default-or-specified
 		trigger_delegation.destroy();
