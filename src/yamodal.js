@@ -86,7 +86,11 @@ const initializeModalListener = ({
 		}
 
 		if (typeof beforeInsertIntoDom === fn) {
-			beforeInsertIntoDom(modal_node, trigger_node, event);
+			// If `beforeInsertIntoDom` returns `false` exactly, bail early
+			let bail_check = beforeInsertIntoDom(modal_node, trigger_node, event);
+			if (bail_check === false) {
+				return;
+			}
 		}
 
 		// Default is to just append the child to the <body>
@@ -110,7 +114,11 @@ const initializeModalListener = ({
 
 		let close_node = event.delegateTarget;
 		if (typeof beforeRemoveFromDom === fn) {
-			beforeRemoveFromDom(modal_node, close_node, event);
+			// If `beforeRemoveFromDom` returns `false` exactly, bail early
+			let bail_check = beforeRemoveFromDom(modal_node, close_node, event);
+			if (bail_check === false) {
+				return;
+			}
 		}
 
 		if (removeModalAfterTransition) {
