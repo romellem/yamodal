@@ -4,21 +4,21 @@ import delegate from 'delegate';
 /**
  * Insert a modal into the DOM after clicking a trigger.
  * Includes various callbacks to allow for overrides and additional "modal"
- * functionality we may want, such as fade-ins/outs.
+ * functionality we may want, such as fade-ins/outs, close on click outside, etc.
  *
- * @param {String|Function} opt.template The main template function that returns a string of HTML. Called with the passed in `context`. The return value of the template should be a single HTML node.
- * @param {Object|Function} [opt.context] Optional context object to be passed into our template template. If a function is passed, it should return a plain object to be used as the context.
+ * @param {Function} opt.template The main template function that returns a string of HTML. Called with the passed in `context`. The return value of the template should be a single HTML node.
+ * @param {Any|Function} [opt.context] Optional context object to be passed into our template template. If a function is passed, it should return a plain object to be used as the context.
  * @param {String} [opt.trigger_selector] Selector of the element(s) that when clicked, open our modal. Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function.
  * @param {String} [opt.close_selector] Selector of the element(s) that when clicked, close its open modal. Defaults to '[data-modal-close]'.
  * @param {Function} [opt.onAppend] Optional function to append our modal to the DOM. Called with two arguments: `modal_node` and `trigger_node`. Defaults to `document.body.appendChild(modal_node)`.
  * @param {Function} [opt.beforeInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`. If this function returns `false`, modal will _not_ be injected and we bail early.
- * @param {Function} [opt.afterInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with two arguments: `modal_node` and `trigger_node`. For instance, you can use this to fade in a modal.
+ * @param {Function} [opt.afterInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`.
  * @param {Boolean} [opt.removeModalAfterTransition] When false, element is removed immediately from DOM. Otherwise, element is removed after a 'transitionend' event has fired on the `modal_node`. Defaults to false.
- * @param {Function} [opt.beforeRemoveFromDom] Optional function that runs before removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node` and `event`. If this function returns `false`, modal will _not_ be removed and we bail early.
- * @param {Function} [opt.afterRemoveFromDom] Optional function that runs after removing the modal from the DOM. Called with two arguments: `modal_node` and `close_node`.
- * @param {Function} [opt.onAfterSetup] Optional function that runs once after all event listeners have been setup. Called with `modal_node` and an object with `open`, `close`, and `destroy` methods.
+ * @param {Function} [opt.beforeRemoveFromDom] Optional function that runs before removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`. If this function returns `false`, modal will _not_ be removed and we bail early.
+ * @param {Function} [opt.afterRemoveFromDom] Optional function that runs after removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`.
+ * @param {Function} [opt.onAfterSetup] Optional function that runs once after all event listeners have been setup. Called with `modal_node` and an object with `isOpen`, `open`, `close`, and `destroy` methods.
  * @param {Function} [opt.onDestroy] Optional function that runs additional cleanup steps if we "destroy" our listeners. Called with `modal_node`.
- * @returns {Object} Returns an object with `modal_node` element, `isOpen` getter, and `destroy`, `close`, & `open` methods. `open` and `close` will be called with a dummy event arg with a null `delegateTarget`, but you can optionally pass in a custom event.
+ * @returns {Object} Returns an object with `modal_node` getter, `isOpen`, `destroy`, `close`, and `open` methods. `open` and `close` will be called with a dummy event arg with a null `delegateTarget`, but you can optionally pass in a custom event.
  * @throws {Error} Throws when `template` is not a function, or if it doesn't return a DOM node.
  */
 const initializeModalListener = ({
