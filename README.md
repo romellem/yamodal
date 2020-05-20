@@ -26,7 +26,7 @@ yarn add @designory/yamodal
 ```js
 import yamodal from '@designory/yamodal';
 
-let yamodalInstance = yamodal({
+let yamodal_instance = yamodal({
     // Options here...
 });
 ```
@@ -36,7 +36,7 @@ let yamodalInstance = yamodal({
 ```html
 <script src="https://unpkg.com/@designory/yamodal@0.1.0/dist/umd/yamodal.min.js"></script>
 <script>
-var yamodalInstance = window.yamodal({
+var yamodal_instance = window.yamodal({
     // Options here...
 });
 </script>
@@ -50,10 +50,13 @@ yamodal({
     // The main template function that returns a string of HTML to be injected.
     // Called with the passed in `context`.
     // The return value of the template should be a single HTML node.
+    // This is the only required option. If it is not a function, an error is thrown.
+    // Additionally, if this function doesn't return a valid DOM node string, an error is thrown.
     template: (context) => '<div>My Modal</div>',
 
     // Optional context to be passed into our template function.
     // If a function is passed, it will be executed and its return value will be passed to our template.
+    // Function contexts get executed each time before the modal is inserted, allowing for dynamic modal content.
     context,
 
     // Selector of the element(s) that when clicked, open our modal.
@@ -169,7 +172,7 @@ function returns an HTML string that contains a single DOM node, it'll work!
 
 #### Option `context`
 
-_Type:_ `Function` or _`Any`_ value
+_Type:_ _`Any`_ or `Function`
 
 Any value that is passed to the `template` function. If `context` is itself
 a function, its return value is passed to our template. Additionally, when a
@@ -194,7 +197,6 @@ yamodal({
 
 _Type:_ `String`
 
-
 The selector of the element(s) that will open the modal when clicked.
 
 If no option is passed, we fall back to two defaults:
@@ -212,7 +214,7 @@ yamodal({
 
 2. When an anonymous function _is_ passed as the `template`, we use `[data-modal-trigger]` as the
 fallback. Note that this should only be used if you have a **single** modal on the page. Otherwise
-the triggers will open up multiple modals which is probably your intended result.
+the triggers will open up multiple modals which is probably not your intended result.
 
 ```js
 // Careful! Both modals will opens when a `<button data-modal-trigger>` is clicked!
