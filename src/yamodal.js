@@ -183,6 +183,8 @@ const initializeModalListener = ({
 		if (typeof onDestroy === fn) {
 			onDestroy(modal_node);
 		}
+
+		modal_node = undefined;
 	};
 
 	rtn_object.destroy = destroy;
