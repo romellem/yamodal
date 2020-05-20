@@ -10,6 +10,9 @@
   },
   "author": "Matt Wade <matt.wade@designory.com>",
   "license": "MIT",
+  "dependencies": {
+    "delegate": "^3.2.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
@@ -29,8 +32,5 @@
   "files": [
     "dist/umd/",
     "dist/esm/"
-  ],
-  "dependencies": {
-    "delegate": "^3.2.0"
-  }
+  ]
 }
