@@ -4,7 +4,6 @@ import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
-import multiInput from 'rollup-plugin-multi-input';
 import filesize from 'rollup-plugin-filesize';
 
 const commonConfig = {
@@ -43,9 +42,6 @@ const umdConfig = Object.assign({}, commonConfig);
 umdConfig.output = Object.assign({}, commonConfig.output, {
 	file: 'dist/umd/yamodal.js',
 	format: 'umd',
-	// globals: {
-	// 	delegate: 'delegate'
-	// }
 });
 umdConfig.plugins = [
 	...commonConfig.plugins,
@@ -63,40 +59,24 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
 });
 umdProdConfig.plugins = [...umdConfig.plugins, terser()];
 
-// // Recipes
-// const recipesCjsConfig = {
-// 	input: 'src/recipes/**/*.js',
-// 	output: {
-// 		dir: 'dist/cjs',
-// 		format: 'cjs',
-// 		sourcemap: true,
-// 	},
-// 	plugins: [multiInput({ relative: 'src' }), ...esmConfig.plugins],
-// };
-// const recipesEsmConfig = Object.assign({}, recipesCjsConfig);
-// recipesEsmConfig.output = Object.assign({}, recipesCjsConfig.output, {
-// 	dir: 'dist/esm',
-// 	format: 'esm',
-// });
-
 let configurations = [];
 if (process.env.SERVE) {
 	const serveConfig = Object.assign({}, commonConfig);
-	serveConfig.input = 'examples/examples.js';
+	serveConfig.input = 'docs/examples.js';
 	serveConfig.output = Object.assign({}, commonConfig.output, {
-		file: 'dist/examples.iife.js',
+		file: 'docs/examples.iife.js',
 		format: 'iife',
 	});
 	serveConfig.plugins = [...umdConfig.plugins];
 	serveConfig.plugins.push(
 		serve({
 			open: true,
-			contentBase: ['public', 'dist'],
+			contentBase: ['docs'],
 			host: 'localhost',
 			port: '3030',
 		}),
 		livereload({
-			watch: 'dist',
+			watch: 'docs',
 			verbose: false,
 		})
 	);
