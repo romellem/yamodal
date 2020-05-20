@@ -163,6 +163,11 @@ const initializeModalListener = ({
 	};
 
 	const destroy = function destroy() {
+		// Close the modal if it is open
+		if (rtn_object.isOpen()) {
+			rtn_object.close();
+		}
+
 		// Reset return functions so they can no longer be called
 		// prettier-ignore
 		const noop = () => console.log(`yamodal instance was destroyed, returned methods can no longer be called.`);
