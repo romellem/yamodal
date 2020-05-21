@@ -27,18 +27,37 @@
 		body {
 			background: linear-gradient(315deg, #e4e6e3, #ffffff);
 			color: var(--black);
-			margin: 40px auto;
-			max-width: 650px;
+			margin: 40px 0;
 			line-height: 1.6;
 			padding: 0 10px;
 		}
 
+		main,
+		footer {
+			max-width: 650px;
+			margin: 0 auto;
+		}
+
 		header {
+			background: var(--red);
+			color: var(--white);
+			margin: -40px -10px 0 -10px;
+			padding: 1rem 10px 1.3rem 10px;
+		}
+
+		header > h1 {
+			max-width: 650px;
+			margin: 0 auto;
 			font-family: monospace;
 			font-size: 3rem;
 			line-height: 1;
 			text-decoration: underline;
 			text-decoration-color: var(--blue);
+		}
+
+		blockquote {
+			margin-top: 2rem;
+			margin-bottom: 2rem;
 		}
 		
 		h1,
@@ -189,26 +208,32 @@
 </head>
 <body>
 	<header>
-		<strong><em>Yet Another</em> Modal</strong>
+		<h1><em>Yet Another</em> Modal</h1>
 	</header>
-	<ul>
-		<li><button data-modal-trigger="basic">Basic</button></li>
-		<li><button data-modal-trigger="fade">Fade in / out</button></li>
-		<li><button data-modal-trigger="animation">Animate in / out</button></li>
-		<li><button data-modal-trigger="scroll-lock">Scroll lock</button></li>
-		<li><button data-modal-trigger="click-outside">Click outside to close</button></li>
-		<li><button data-modal-trigger="close-on-esc">Press ESC to close</button></li>
-		<li><button data-modal-trigger="auto-open-on-hash-param">Auto-open on hash param</button></li>
-		<li><button data-modal-trigger="dynamic-context">Dynamic context</button></li>
-	</ul>
-	<hr>
-	<p>Dummy text to show the <em>scroll lock</em> example:</p>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus mauris vitae ultricies leo integer malesuada nunc. Mattis aliquam faucibus purus in massa tempor nec feugiat. Vel turpis nunc eget lorem dolor sed viverra ipsum nunc. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Bibendum neque egestas congue quisque egestas diam in. Viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas. Phasellus egestas tellus rutrum tellus pellentesque. Odio facilisis mauris sit amet massa vitae tortor condimentum. Sagittis id consectetur purus ut faucibus pulvinar. Nam aliquam sem et tortor consequat id porta nibh venenatis. Volutpat diam ut venenatis tellus in metus vulputate eu. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Mi eget mauris pharetra et. Amet dictum sit amet justo. Condimentum mattis pellentesque id nibh.</p>
-	<p>Sed blandit libero volutpat sed cras ornare. Mattis enim ut tellus elementum sagittis vitae et. Cras adipiscing enim eu turpis egestas pretium aenean. Sit amet aliquam id diam maecenas ultricies mi eget. Commodo viverra maecenas accumsan lacus vel facilisis volutpat. Congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien. Egestas sed tempus urna et pharetra pharetra massa. Id interdum velit laoreet id donec. Viverra nibh cras pulvinar mattis nunc. Faucibus scelerisque eleifend donec pretium. Mi ipsum faucibus vitae aliquet nec. Cursus in hac habitasse platea dictumst quisque sagittis purus. Elementum nisi quis eleifend quam adipiscing vitae proin. Eu lobortis elementum nibh tellus molestie nunc. Scelerisque purus semper eget duis at tellus at urna condimentum. Dolor sit amet consectetur adipiscing elit ut aliquam purus.</p>
-	<p>Amet risus nullam eget felis eget nunc lobortis mattis aliquam. Semper eget duis at tellus at urna condimentum mattis pellentesque. Semper quis lectus nulla at volutpat diam ut. Id neque aliquam vestibulum morbi blandit cursus risus at ultrices. Mauris pharetra et ultrices neque. In metus vulputate eu scelerisque. Varius duis at consectetur lorem. Ullamcorper sit amet risus nullam eget. Nec feugiat in fermentum posuere urna nec tincidunt praesent. Mi ipsum faucibus vitae aliquet nec ullamcorper sit. Massa sed elementum tempus egestas sed sed risus. Auctor augue mauris augue neque gravida in fermentum et. Pretium lectus quam id leo in. Venenatis cras sed felis eget velit aliquet sagittis id consectetur. Phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam.</p>
-	<p>Elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique. Commodo nulla facilisi nullam vehicula ipsum a arcu cursus vitae. Pulvinar etiam non quam lacus suspendisse faucibus interdum. Blandit aliquam etiam erat velit. Nulla pharetra diam sit amet nisl. Sodales neque sodales ut etiam sit amet nisl purus in. Id aliquet risus feugiat in ante metus. Amet consectetur adipiscing elit duis tristique sollicitudin nibh. Enim sit amet venenatis urna cursus eget nunc. Semper feugiat nibh sed pulvinar proin gravida hendrerit lectus. Viverra adipiscing at in tellus integer feugiat scelerisque. Quam pellentesque nec nam aliquam sem et tortor consequat. Mollis aliquam ut porttitor leo a. Porttitor massa id neque aliquam. Scelerisque felis imperdiet proin fermentum. Eleifend quam adipiscing vitae proin sagittis nisl rhoncus.</p>
-	<p>Fermentum posuere urna nec tincidunt praesent. Diam vel quam elementum pulvinar etiam non. Vehicula ipsum a arcu cursus. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Porttitor massa id neque aliquam vestibulum. Lacus viverra vitae congue eu consequat ac felis. Semper risus in hendrerit gravida rutrum quisque. Ac auctor augue mauris augue neque gravida. Bibendum est ultricies integer quis auctor elit sed vulputate mi. Massa placerat duis ultricies lacus sed turpis tincidunt id. Volutpat blandit aliquam etiam erat velit scelerisque in dictum. Sapien pellentesque habitant morbi tristique senectus et netus. In dictum non consectetur a erat. Sed tempus urna et pharetra pharetra. Dictum non consectetur a erat nam at lectus urna. Aliquam nulla facilisi cras fermentum odio eu feugiat pretium. Lacus luctus accumsan tortor posuere ac. Morbi tristique senectus et netus. Ullamcorper sit amet risus nullam eget felis eget nunc. Quisque non tellus orci ac auctor augue mauris augue.</p>
-
+	<main>
+		<blockquote>
+			<strong><code>yamodal</code></strong> is <em>yet another</em> modal library written in vanilla javascript.
+			It aims to provide basic functionality for <em>injecting</em> an element into the DOM
+			when a <em>trigger</em> is clicked, and <em>removing</em> that same node when a relevant
+			<em>close</em> element is also clicked.
+		</blockquote>
+		<hr>
+		<p><strong>Examples:</strong></p>
+		<ul>
+			<li><button data-modal-trigger="basic">Basic</button></li>
+			<li><button data-modal-trigger="fade">Fade in / out</button></li>
+			<li><button data-modal-trigger="animation">Animate in / out</button></li>
+			<li><button data-modal-trigger="scroll-lock">Scroll lock</button></li>
+			<li><button data-modal-trigger="click-outside">Click outside to close</button></li>
+			<li><button data-modal-trigger="close-on-esc">Press ESC to close</button></li>
+			<li><button data-modal-trigger="auto-open-on-hash-param">Auto-open on hash param</button></li>
+			<li><button data-modal-trigger="dynamic-context">Dynamic context</button></li>
+		</ul>
+		<hr>
+	</main>
+	<footer>
+		<a href="https://github.com/designory/yamodal">Github</a>
+	</footer>
 	<script src="/examples.iife.js"></script>
 </body>
 </html>
