@@ -27,7 +27,8 @@
   },
   "keywords": [
     "modal",
-    "overlay"
+    "overlay",
+    "vanillajs"
   ],
   "files": [
     "dist/umd/",
