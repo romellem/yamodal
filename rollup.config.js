@@ -59,16 +59,17 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
 });
 umdProdConfig.plugins = [...umdConfig.plugins, terser()];
 
+const serveConfig = Object.assign({}, commonConfig);
+serveConfig.input = 'docs/examples.js';
+serveConfig.output = Object.assign({}, commonConfig.output, {
+	file: 'docs/examples.iife.js',
+	format: 'iife',
+	sourcemap: false,
+});
+serveConfig.plugins = [...umdConfig.plugins];
+
 let configurations = [];
 if (process.env.SERVE) {
-	const serveConfig = Object.assign({}, commonConfig);
-	serveConfig.input = 'docs/examples.js';
-	serveConfig.output = Object.assign({}, commonConfig.output, {
-		file: 'docs/examples.iife.js',
-		format: 'iife',
-		sourcemap: false,
-	});
-	serveConfig.plugins = [...umdConfig.plugins];
 	serveConfig.plugins.push(
 		serve({
 			open: true,
@@ -87,9 +88,8 @@ if (process.env.SERVE) {
 		esmConfig,
 		esmProdConfig,
 		umdConfig,
-		umdProdConfig
-		// ,recipesCjsConfig,
-		// recipesEsmConfig
+		umdProdConfig,
+		serveConfig
 	);
 
 	for (let configuration of configurations) {
