@@ -1,5 +1,6 @@
 .npmignore
 docs/
 src/
+examples/
 rollup.config.js
 babel.config.js
