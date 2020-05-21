@@ -66,6 +66,7 @@ if (process.env.SERVE) {
 	serveConfig.output = Object.assign({}, commonConfig.output, {
 		file: 'docs/examples.iife.js',
 		format: 'iife',
+		sourcemap: false,
 	});
 	serveConfig.plugins = [...umdConfig.plugins];
 	serveConfig.plugins.push(
