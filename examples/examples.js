@@ -1,12 +1,12 @@
 import yamodal from '../src/yamodal.js';
-import animation from './example-templates/animation.js';
-import basic from './example-templates/basic.js';
-import fade from './example-templates/fade.js';
-import scrollLock from './example-templates/scroll-lock.js';
-import clickOutside from './example-templates/click-outside.js';
-import closeOnEscape from './example-templates/close-on-esc.js';
-import autoOpenOnHashParam from './example-templates/auto-open-on-hash-param.js';
-import dynamicContext from './example-templates/dynamic-context.js';
+import animation from './templates/animation.js';
+import basic from './templates/basic.js';
+import fade from './templates/fade.js';
+import scrollLock from './templates/scroll-lock.js';
+import clickOutside from './templates/click-outside.js';
+import closeOnEscape from './templates/close-on-esc.js';
+import autoOpenOnHashParam from './templates/auto-open-on-hash-param.js';
+import dynamicContext from './templates/dynamic-context.js';
 
 // Basic example (click modal to close)
 yamodal({

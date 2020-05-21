@@ -60,7 +60,7 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
 umdProdConfig.plugins = [...umdConfig.plugins, terser()];
 
 const serveConfig = Object.assign({}, commonConfig);
-serveConfig.input = 'docs/examples.js';
+serveConfig.input = 'examples/examples.js';
 serveConfig.output = Object.assign({}, commonConfig.output, {
 	file: 'docs/examples.iife.js',
 	format: 'iife',

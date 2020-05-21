@@ -1,5 +1,5 @@
 const once = (element, event_type, callback) => {
-	// Purposefuly don't use an arrow function so `this` can get binded correctly
+	// Purposefully don't use an arrow function so `this` can get binded correctly
 	const callbackWithRemove = function(event) {
 		element.removeEventListener(event_type, callbackWithRemove);
 		callback.call(this, event);
