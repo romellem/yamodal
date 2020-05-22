@@ -18,7 +18,7 @@
   }
 
   var once = function once(element, event_type, callback) {
-    // Purposefuly don't use an arrow function so `this` can get binded correctly
+    // Purposefully don't use an arrow function so `this` can get binded correctly
     var callbackWithRemove = function callbackWithRemove(event) {
       element.removeEventListener(event_type, callbackWithRemove);
       callback.call(this, event);

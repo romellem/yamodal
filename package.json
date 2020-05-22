@@ -5,8 +5,10 @@
   "main": "dist/umd/yamodal.js",
   "module": "dist/esm/yamodal.esm.js",
   "scripts": {
-    "start": "rollup -c --watch --environment SERVE:true",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prebuild": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "start": "rollup -c --watch --environment SERVE:true"
   },
   "author": "Matt Wade <matt.wade@designory.com>",
   "license": "MIT",
