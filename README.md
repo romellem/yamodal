@@ -234,11 +234,26 @@ The selector of the element(s) that will close the currently opened modal when c
 Note that these elements do _not_ have to be children elements of the modal. They can
 exist anywhere on the document.
 
-Defaults to `[data-modal-close]`.
+If no option is passed, the modal node checks for a child that matches the selector
+`[data-modal-close]`. If no element is found, then the modal itself has the close
+handler attached to it.
+
+```js
+yamodal({
+    template: () => `<div>Click <button class="close">me</button> to close the modal.</div>`,
+    close_selector: '.close',
+});
+```
 
 ```js
 yamodal({
     template: () => `<div>Click <button data-modal-close>me</button> to close the modal.</div>`,
+});
+```
+
+```js
+yamodal({
+    template: () => `<div>Click anywhere to close this modal.</div>`,
 });
 ```
 
