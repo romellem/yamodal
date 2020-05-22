@@ -500,8 +500,9 @@ this defaults to `undefined`.
 
 _Type:_ `Function`
 
-When `destroy()` is run it removes the open and close event listeners and unsets
-our modal node. Also calls `onDestroy()` if that set on initialization.
+When `destroy()` is run it closes the modal (if it is opened) and removes the
+open and close event listeners and unsets our modal node. Also calls `onDestroy()`
+if that was set on initialization.
 
 ```js
 // <button data-modal-trigger>Open Modal</button> <button data-modal-destroy>Destroy Modal</button>
