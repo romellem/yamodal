@@ -12,6 +12,14 @@
   },
   "author": "Matt Wade <matt.wade@designory.com>",
   "license": "MIT",
+  "homepage": "https://designory.github.io/yamodal/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Designory/yamodal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Designory/yamodal/issues"
+  },
   "dependencies": {
     "delegate": "^3.2.0"
   },
