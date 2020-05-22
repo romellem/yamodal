@@ -1,5 +1,7 @@
 # (Yet Another) Modal
 
+[![npm version](https://badge.fury.io/js/%40designory%2Fyamodal.svg)](https://badge.fury.io/js/%40designory%2Fyamodal)
+
 **YaModal** is _yet another_ modal library written in vanilla javascript.
 It aims to provide basic functionality for _injecting_ an element into the DOM
 when a _trigger_ is clicked, and _removing_ that same node when a relevant
@@ -34,7 +36,7 @@ let yamodal_instance = yamodal({
 #### When using the UMD bundle directly in the browser:
 
 ```html
-<script src="https://unpkg.com/@designory/yamodal@0.1.0/dist/umd/yamodal.min.js"></script>
+<script src="https://unpkg.com/@designory/yamodal/dist/umd/yamodal.min.js"></script>
 <script>
 var yamodal_instance = window.yamodal({
     // Options here...
@@ -515,8 +517,9 @@ destroy_button.addEventListener('click', function() {
 
 ### Examples
 
-See [examples.js](./examples/examples.js) for a list of common "advanced" modal
-uses, such as:
+See [examples.js](./examples/examples.js) (published at
+[designory.github.io/yamodal/](https://designory.github.io/yamodal/) as well)
+for a list of common "advanced" modal uses, such as:
 
 - Fade in / out.
 - Animate in / out.
