@@ -418,8 +418,8 @@ Called with two arguments, `modal_node` and an object that contains `isOpen()`,
 
 _Type:_ `Function`
 
-The `yamodal()` function returns an object with a `destroy()` method to remove
-the event listeners we had previously set.
+The `yamodal()` function returns an object with a [`destroy()`](#return-destroy)
+method to remove the event listeners we had previously set.
 
 If `onDestroy` is also set, that is called at the end of running `destroy()`.
 
@@ -469,7 +469,7 @@ _Type:_ `Function`
 
 When `isOpen()` is run, it returns `true` if the current modal is open, `false` if otherwise.
 
-#### Return `open(event = { delegateTarget: null })`
+#### Return `open(event)`
 
 _Type:_ `Function`
 
@@ -477,8 +477,8 @@ When `open()` is run it triggers the same handler that runs when a trigger is cl
 This means that any `beforeInsertIntoDom`, `onAppend`, or `afterInsertIntoDom`
 functions will also run.
 
-Since the open handler expects an event with a `delegateTarget` attribute, by default
-we pass in a dummy object with `delegateTarget = null`. This can optional be overridden.
+Optionally you can send a custom event to the open handler. For this manual call,
+this defaults to `undefined`.
 
 ```js
 // Automatically open our modal after a 1 second delay
@@ -486,15 +486,15 @@ var my_modal = yamodal({ ... });
 setTimeout(() => my_modal.open(), 1000);
 ```
 
-#### Return `close(event = { delegateTarget: null })`
+#### Return `close(event)`
 
 _Type:_ `Function`
 
 When `close()` is run it triggers the same handler that runs when a close element is clicked.
 This means that any `beforeRemoveFromDom`, or `afterRemoveFromDom` functions will also run.
 
-Since the close handler expects an event with a `delegateTarget` attribute, by default
-we pass in a dummy object with `delegateTarget = null`. This can optional be overridden.
+Optionally you can send a custom event to the close handler. For this manual call,
+this defaults to `undefined`.
 
 #### Return `destroy()`
 
@@ -518,6 +518,7 @@ See [examples.js](./examples/examples.js) for a list of common "advanced" modal
 uses, such as:
 
 - Fade in / out.
+- Animate in / out.
 - Scroll lock background.
 - Close on click outside.
 - Close on `ESC` key press.
