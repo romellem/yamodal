@@ -73,10 +73,10 @@ const initializeModalListener = ({
 		yamodal_fake_close_event.initCustomEvent('yamodal.close', true, true);
 	}
 
-	const createModalNode = () => {
+	const createModalNode = (open_event) => {
 		let template_context = context;
 		if (typeof context === fn) {
-			template_context = context();
+			template_context = context(open_event);
 		}
 
 		// Assumes our template returns a single child node
@@ -87,7 +87,7 @@ const initializeModalListener = ({
 		return dummy_ele.firstElementChild;
 	};
 
-	let modal_node = createModalNode();
+	let modal_node = createModalNode(yamodal_fake_open_event);
 
 	if (!modal_node) {
 		throw new Error('"template" must return a DOM node.');
@@ -116,7 +116,7 @@ const initializeModalListener = ({
 		let trigger_node = event && event.delegateTarget;
 
 		if (typeof context === fn) {
-			modal_node = createModalNode();
+			modal_node = createModalNode(event);
 		}
 
 		if (typeof beforeInsertIntoDom === fn) {
