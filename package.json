@@ -9,7 +9,7 @@
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "start": "rollup -c --watch --environment SERVE:true",
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "author": "Matt Wade <matt.wade@designory.com>",
   "license": "MIT",
@@ -33,6 +33,7 @@
     "global-jsdom": "^6.1.0",
     "jsdom": "^16.2.2",
     "mocha": "^7.2.0",
+    "nyc": "^15.1.0",
     "rollup": "^2.9.0",
     "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-livereload": "^1.0.4",
