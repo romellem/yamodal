@@ -255,6 +255,11 @@ If no option is passed, the modal node checks for a child that matches the selec
 `[data-modal-close]`. If no element is found, then the modal itself has the close
 handler attached to it.
 
+> Note that dynamic modals (that is, modals with a `context()` function passed in)
+> without a `close_selector` defined can **not** fall back to attaching the close
+> handler on the modal because no modal has been created yet to check for a
+> `[data-modal-close]` element.
+
 ```js
 yamodal({
     template: () => `<div>Click <button class="close">me</button> to close the modal.</div>`,

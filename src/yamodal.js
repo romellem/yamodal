@@ -86,6 +86,11 @@ const initializeModalListener = ({
 	 * If no `close_selector` was passed, check if `[data-modal-close]` matches an
 	 * element within our modal. If not, then reset our close selector which in turn
 	 * means that the modal will be closed when itself is clicked.
+	 *
+	 * Note that dynamic modals (that is, modals with a `context()` function passed in)
+	 * can **not** default to clicking on the modal to close because the dynamic
+	 * modal hasn't been created for us to check if it contains a `[data-modal-close]`
+	 * element.
 	 */
 	if (close_selector === undefined) {
 		close_selector = '[data-modal-close]';
