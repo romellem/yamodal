@@ -8,7 +8,8 @@
     "build": "rollup -c",
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "start": "rollup -c --watch --environment SERVE:true"
+    "start": "rollup -c --watch --environment SERVE:true",
+    "test": "mocha"
   },
   "author": "Matt Wade <matt.wade@designory.com>",
   "license": "MIT",
@@ -29,6 +30,9 @@
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^11.0.0",
     "@rollup/plugin-node-resolve": "^7.1.0",
+    "jsdom": "^16.2.2",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^7.2.0",
     "rollup": "^2.9.0",
     "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-livereload": "^1.0.4",
