@@ -563,6 +563,7 @@ for a list of common "advanced" modal uses, such as:
 - Close on `ESC` key press.
 - Dynamic modal (from context).
 - Auto open based on some condition (hash parameter in URL).
+- Interstitial before navigating to a link.
 
 ## Browser Support
 
