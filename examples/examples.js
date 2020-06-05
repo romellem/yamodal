@@ -7,6 +7,7 @@ import clickOutside from './templates/click-outside.js';
 import closeOnEscape from './templates/close-on-esc.js';
 import autoOpenOnHashParam from './templates/auto-open-on-hash-param.js';
 import dynamicContext from './templates/dynamic-context.js';
+import interstitial from './templates/interstitial.js';
 
 // Basic example (click modal to close)
 yamodal({
@@ -129,4 +130,16 @@ yamodal({
 	template: dynamicContext,
 	trigger_selector: '[data-modal-trigger="dynamic-context"]',
 	context: () => Math.random(),
+});
+
+// Link with an interstitial
+yamodal({
+	template: interstitial,
+	trigger_selector: '[data-modal-trigger="interstitial"]',
+	beforeInsertIntoDom(modal_node, trigger_node, event) {
+		event.preventDefault();
+	},
+	context(trigger_node) {
+		return trigger_node.href;
+	},
 });

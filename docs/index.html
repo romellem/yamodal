@@ -51,6 +51,7 @@
 				font-family: monospace;
 				font-size: 3rem;
 				line-height: 1;
+				text-align: center;
 				text-decoration: underline;
 				-webkit-text-decoration-color: var(--blue);
 				text-decoration-color: var(--blue);
@@ -78,6 +79,11 @@
 				text-decoration: none;
 			}
 
+			a.button {
+				color: var(--black);
+				text-decoration: none;
+			}
+
 			.overlay {
 				position: fixed;
 				top: 0;
@@ -100,13 +106,15 @@
 				justify-content: center;
 				align-items: center;
 				text-align: center;
+				word-break: break-all;
 
 				border-radius: 50px;
 				background: linear-gradient(145deg, #e4e6e3, #ffffff);
 				box-shadow: 20px 20px 60px #d7d9d6cc, -20px -20px 60px #ffffffcc;
 			}
 
-			button {
+			button,
+			.button {
 				/* button reset */
 				font: inherit;
 				line-height: normal;
@@ -119,7 +127,8 @@
 				background: transparent;
 			}
 
-			button {
+			button,
+			.button {
 				font-size: 1rem;
 				line-height: 1.5;
 				cursor: pointer;
@@ -232,6 +241,14 @@
 					</button>
 				</li>
 				<li><button data-modal-trigger="dynamic-context">Dynamic context</button></li>
+				<li>
+					<a
+						data-modal-trigger="interstitial"
+						href="https://github.com/Designory/yamodal"
+						class="button"
+						>Interstitial Link</a
+					>
+				</li>
 			</ul>
 			<hr />
 		</main>
