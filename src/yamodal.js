@@ -89,7 +89,7 @@ const initializeModalListener = ({
 	 */
 	if (close_selector === undefined) {
 		close_selector = '[data-modal-close]';
-		if (!modal_node.querySelector(close_selector)) {
+		if (modal_node && !modal_node.querySelector(close_selector)) {
 			close_selector = undefined;
 		}
 	}
