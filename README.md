@@ -79,7 +79,7 @@ yamodal({
     // Called with three arguments: `modal_node`, `trigger_node`, and the opening `event`.
     beforeInsertIntoDom(modal_node, trigger_node, event){ ... },
 
-    // Optional function that runs before inserting the modal into the DOM.
+    // Optional function that runs after inserting the modal into the DOM.
     // Called with three arguments: `modal_node`, `trigger_node`, and the opening `event`.
     afterInsertIntoDom(modal_node, trigger_node, event){ ... },
 
