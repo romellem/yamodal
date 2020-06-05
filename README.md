@@ -57,7 +57,8 @@ yamodal({
     template: (context) => '<div>My Modal</div>',
 
     // Optional context to be passed into our template function.
-    // If a function is passed, it will be executed and its return value will be passed to our template.
+    // If a function is passed, it will be called with `trigger_node` and `event`
+    // as its arguments and its return value will be passed to our template.
     // Function contexts get executed each time before the modal is inserted, allowing for dynamic modal content.
     context,
 
@@ -177,7 +178,8 @@ function returns an HTML string that contains a single DOM node, it'll work!
 _Type:_ _`Any`_ or `Function`
 
 Any value that is passed to the `template` function. If `context` is itself
-a function, its return value is passed to our template. Additionally, when a
+a function, it will be called with `trigger_node` and `event` arguments.
+The return value of this call is passed to our template. Additionally, when a
 `context()` function is used, we recreate our `modal_node` just prior to opening
 (it is executed before the `beforeInsertIntoDom` callback).
 
@@ -192,6 +194,19 @@ yamodal({
 yamodal({
     template: (context) => `<div>This <em>will</em> change between modal opens: ${context}</div>`,
     context: () => Math.random(),
+});
+```
+
+```js
+// <a href="http://example.com" data-modal-trigger>3rd party link</a>
+yamodal({
+    template: url => `<div>Continue? <a href="${url}">Link</a></div>`,
+    beforeInsertIntoDom(modal, trigger, event){
+        event.preventDefault();
+    },
+    context(trigger_node) {
+        return trigger_node.href;
+    },
 });
 ```
 
