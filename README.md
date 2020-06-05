@@ -183,6 +183,15 @@ The return value of this call is passed to our template. Additionally, when a
 `context()` function is used, we recreate our `modal_node` just prior to opening
 (it is executed before the `beforeInsertIntoDom` callback).
 
+> Note: If a function is passed in for `context` then we don't create the modal
+> immediately. We only create it when it is opened. So, if you grab the `modal_node`
+> property from `yamodal()`s return object, it will be `undefined`.
+>
+> Also note if your `context` function relies on the `trigger_node` or `event`
+> arguments, these values will set as `undefined` and a dummy `CustomEvent`
+> (respectively) when opening the modal with the programmatic
+> [`open()`](#return-openevent) method.
+
 ```js
 yamodal({
     template: (context) => `<div>This won't change between modal opens: ${context}</div>`,
