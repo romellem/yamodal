@@ -2,5 +2,7 @@
 docs/
 src/
 examples/
+.nyc_output/
+test/
 rollup.config.js
 babel.config.js
