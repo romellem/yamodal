@@ -68,7 +68,7 @@ yamodal({
 
     // Selector of the element(s) that when clicked, close its open modal.
     // Defaults to '[data-modal-close]'.
-    close_selector
+    close_selector,
 
     // Optional function to append our modal to the DOM.
     // Called with three arguments: `modal_node`, `trigger_node`and the opening `event`.
@@ -263,15 +263,15 @@ yamodal({
 
 #### Option `close_selector`
 
-_Type:_ `String`
+_Type:_ `String` or `null`
 
 The selector of the element(s) that will close the currently opened modal when clicked.
 Note that these elements do _not_ have to be children elements of the modal. They can
 exist anywhere on the document.
 
 If no option is passed, the modal node checks for a child that matches the selector
-`[data-modal-close]`. If no element is found, then the modal itself has the close
-handler attached to it.
+`[data-modal-close]`. If no element is found or `close_selector` is `null`, then the
+modal itself has the close handler attached to it.
 
 ```js
 yamodal({
