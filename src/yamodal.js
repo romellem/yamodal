@@ -73,10 +73,10 @@ const initializeModalListener = ({
 		yamodal_fake_close_event.initCustomEvent('yamodal.close', true, true);
 	}
 
-	const createModalNode = (open_event) => {
+	const createModalNode = (trigger_node, open_event) => {
 		let template_context = context;
 		if (typeof context === fn) {
-			template_context = context(open_event);
+			template_context = context(trigger_node, open_event);
 		}
 
 		// Assumes our template returns a single child node
@@ -84,13 +84,22 @@ const initializeModalListener = ({
 		let modal_html = template(template_context);
 		let dummy_ele = document.createElement('div');
 		dummy_ele.innerHTML = modal_html;
-		return dummy_ele.firstElementChild;
+
+		let child = dummy_ele.firstElementChild;
+		if (!child) {
+			throw new Error('"template" must return a DOM node.');
+		}
+
+		return child;
 	};
 
-	let modal_node = createModalNode(yamodal_fake_open_event);
-
-	if (!modal_node) {
-		throw new Error('"template" must return a DOM node.');
+	/**
+	 * Only create `modal_node` if we don't have a dynamic context. Otherwise
+	 * this will be created when the modal is opened.
+	 */
+	let modal_node;
+	if (typeof context !== fn) {
+		modal_node = createModalNode();
 	}
 
 	/**
@@ -116,7 +125,7 @@ const initializeModalListener = ({
 		let trigger_node = event && event.delegateTarget;
 
 		if (typeof context === fn) {
-			modal_node = createModalNode(event);
+			modal_node = createModalNode(trigger_node, event);
 		}
 
 		if (typeof beforeInsertIntoDom === fn) {
