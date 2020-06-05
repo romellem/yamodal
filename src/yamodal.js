@@ -53,9 +53,11 @@ const initializeModalListener = ({
 		}
 	}
 
+	const modal_is_dynamic = typeof context === fn;
+
 	const createModalNode = (trigger_node, open_event) => {
 		let template_context = context;
-		if (typeof context === fn) {
+		if (modal_is_dynamic) {
 			template_context = context(trigger_node, open_event);
 		}
 
@@ -78,24 +80,24 @@ const initializeModalListener = ({
 	 * this will be created when the modal is opened.
 	 */
 	let modal_node;
-	if (typeof context !== fn) {
+	if (!modal_is_dynamic) {
 		modal_node = createModalNode();
 	}
 
 	/**
-	 * If no `close_selector` was passed, check if `[data-modal-close]` matches an
-	 * element within our modal. If not, then reset our close selector which in turn
-	 * means that the modal will be closed when itself is clicked.
+	 * If no `close_selector` was passed **and** we have a static modal_node, check if
+	 * `[data-modal-close]` matches an element within our modal. If not, then reset our
+	 * close selector which in turn means that the modal will be closed when itself is clicked.
 	 *
-	 * Note that dynamic modals (that is, modals with a `context()` function passed in)
-	 * can **not** default to clicking on the modal to close because the dynamic
-	 * modal hasn't been created for us to check if it contains a `[data-modal-close]`
-	 * element.
+	 * If we do have a dynamic modal, then this check is repeated in our onTriggerOpen
+	 * function
 	 */
+	const default_close_selector = '[data-modal-close]';
+	let no_close_selector_specified = false;
 	if (close_selector === undefined) {
-		close_selector = '[data-modal-close]';
-		if (modal_node && !modal_node.querySelector(close_selector)) {
-			close_selector = undefined;
+		no_close_selector_specified = true;
+		if (modal_node && modal_node.querySelector(default_close_selector)) {
+			close_selector = default_close_selector;
 		}
 	}
 
@@ -109,8 +111,13 @@ const initializeModalListener = ({
 		// @todo Consider using optional chaining
 		let trigger_node = event && event.delegateTarget;
 
-		if (typeof context === fn) {
+		if (modal_is_dynamic) {
 			modal_node = createModalNode(trigger_node, event);
+
+			// Always check for the default close selector if none was specified for a dynamic modal
+			if (no_close_selector_specified && modal_node.querySelector(default_close_selector)) {
+				close_selector = default_close_selector;
+			}
 		}
 
 		if (typeof beforeInsertIntoDom === fn) {
