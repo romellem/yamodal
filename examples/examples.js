@@ -8,6 +8,7 @@ import closeOnEscape from './templates/close-on-esc.js';
 import autoOpenOnHashParam from './templates/auto-open-on-hash-param.js';
 import dynamicContext from './templates/dynamic-context.js';
 import interstitial from './templates/interstitial.js';
+import dynamicContextReadingEvent from './templates/dynamic-context-reading-event.js';
 
 // Basic example (click modal to close)
 yamodal({
@@ -142,4 +143,22 @@ yamodal({
 	context(trigger_node) {
 		return trigger_node.href;
 	},
+});
+
+// Reading the custom `event` that is passed when `open()` is called
+let modal = yamodal({
+	template: dynamicContextReadingEvent,
+	trigger_selector: '[data-modal-trigger="dynamic-context-reading-event"]',
+	context(trigger_node, event) {
+		return event;
+	},
+});
+
+let number_input = document.getElementById('number-input');
+number_input.addEventListener('input', e => {
+	let num = parseInt(e.target.value, 10);
+	if (window.isNaN(num)) return;
+	if (num % 5 === 0) {
+		modal.open();
+	}
 });

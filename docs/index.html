@@ -138,6 +138,13 @@
 				padding: 0.25rem 0.5rem;
 			}
 
+			input {
+				font-size: 1rem;
+				line-height: 1.5;
+				padding: 0.25rem 0.5rem;
+				width: 3rem;
+			}
+
 			.overlay button[data-modal-close],
 			.modal button[data-modal-close] {
 				position: absolute;
@@ -248,6 +255,16 @@
 						class="button"
 						>Interstitial Link</a
 					>
+				</li>
+				<li>
+					<p>
+						Click the button below to open the modal directly, or change the input to a
+						multiple of <em>5</em> to open the modal via the <code>open()</code> method.
+					</p>
+					<input type="number" id="number-input" value="1" />
+					<button data-modal-trigger="dynamic-context-reading-event">
+						Direct and programmatic opening
+					</button>
 				</li>
 			</ul>
 			<hr />
