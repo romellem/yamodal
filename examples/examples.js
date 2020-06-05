@@ -40,13 +40,13 @@ yamodal({
 	remove_modal_after_event_type: 'animationend',
 	beforeInsertIntoDom(modal_node) {
 		let inner_modal = modal_node.querySelector('.modal');
-		inner_modal.classList.add('roll-in-blurred-left');
-		inner_modal.classList.remove('roll-out-blurred-left');
+		inner_modal.classList.add('tilt-in-fwd-tr');
+		inner_modal.classList.remove('slide-out-elliptic-top-bck');
 	},
 	beforeRemoveFromDom(modal_node) {
 		let inner_modal = modal_node.querySelector('.modal');
-		inner_modal.classList.remove('roll-in-blurred-left');
-		inner_modal.classList.add('roll-out-blurred-left');
+		inner_modal.classList.remove('tilt-in-fwd-tr');
+		inner_modal.classList.add('slide-out-elliptic-top-bck');
 	},
 });
 
