@@ -18,7 +18,7 @@ import delegate from 'delegate';
  * @param {Function} [opt.afterRemoveFromDom] Optional function that runs after removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`.
  * @param {Function} [opt.onAfterSetup] Optional function that runs once after all event listeners have been setup. Called with `modal_node` and an object with `isOpen`, `open`, `close`, and `destroy` methods.
  * @param {Function} [opt.onDestroy] Optional function that runs additional cleanup steps if we "destroy" our listeners. Called with `modal_node`.
- * @returns {Object} Returns an object with `modal_node` getter, `isOpen`, `destroy`, `close`, and `open` methods. `open` and `close` will be called with a dummy event arg with a null `delegateTarget`, but you can optionally pass in a custom event.
+ * @returns {Object} Returns an object with `modal_node` getter, `isOpen`, `destroy`, `close`, and `open` methods. `open` and `close` will be called with a dummy CustomEvent, but you can optionally pass your own.
  * @throws {Error} Throws when `template` is not a function, or if it doesn't return a DOM node.
  */
 const initializeModalListener = ({
@@ -50,6 +50,27 @@ const initializeModalListener = ({
 		} else {
 			trigger_selector = '[data-modal-trigger]';
 		}
+	}
+
+	/**
+	 * Create a dummy event to pass through when calling `open` or `close` via API
+	 * This helps with instances where you want to interact with the event in a callback
+	 * (say, to `preventDefault`) but you don't add a conditional to ensure the event
+	 * exists. This way, you can always operate on a real event without having to
+	 * worry about its existance.
+	 */
+	let yamodal_fake_open_event;
+	let yamodal_fake_close_event;
+	if (window.CustomEvent && typeof window.CustomEvent === fn) {
+		yamodal_fake_open_event = new CustomEvent('yamodal.open');
+		yamodal_fake_close_event = new CustomEvent('yamodal.close');
+	} else {
+		// IE doesn't support `CustomEvent` constructor
+		// @link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Browser_compatibility
+		yamodal_fake_open_event = document.createEvent('CustomEvent');
+		yamodal_fake_open_event.initCustomEvent('yamodal.open', true, true);
+		yamodal_fake_close_event = document.createEvent('CustomEvent');
+		yamodal_fake_close_event.initCustomEvent('yamodal.close', true, true);
 	}
 
 	const createModalNode = () => {
@@ -175,10 +196,10 @@ const initializeModalListener = ({
 		get modal_node() {
 			return modal_node;
 		},
-		open(event) {
+		open(event = yamodal_fake_open_event) {
 			return onTriggerOpen(event);
 		},
-		close(event) {
+		close(event = yamodal_fake_close_event) {
 			return onTriggerClose(event);
 		},
 		isOpen() {
