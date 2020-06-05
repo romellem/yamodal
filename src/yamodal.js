@@ -1,4 +1,5 @@
 import once from './utils/once-event-listener';
+import createEmptyCustomEvent from './utils/custom-event';
 import delegate from 'delegate';
 
 /**
@@ -50,27 +51,6 @@ const initializeModalListener = ({
 		} else {
 			trigger_selector = '[data-modal-trigger]';
 		}
-	}
-
-	/**
-	 * Create a dummy event to pass through when calling `open` or `close` via API
-	 * This helps with instances where you want to interact with the event in a callback
-	 * (say, to `preventDefault`) but you don't add a conditional to ensure the event
-	 * exists. This way, you can always operate on a real event without having to
-	 * worry about its existance.
-	 */
-	let yamodal_fake_open_event;
-	let yamodal_fake_close_event;
-	if (window.CustomEvent && typeof window.CustomEvent === fn) {
-		yamodal_fake_open_event = new CustomEvent('yamodal.open');
-		yamodal_fake_close_event = new CustomEvent('yamodal.close');
-	} else {
-		// IE doesn't support `CustomEvent` constructor
-		// @link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Browser_compatibility
-		yamodal_fake_open_event = document.createEvent('CustomEvent');
-		yamodal_fake_open_event.initCustomEvent('yamodal.open', true, true);
-		yamodal_fake_close_event = document.createEvent('CustomEvent');
-		yamodal_fake_close_event.initCustomEvent('yamodal.close', true, true);
 	}
 
 	const createModalNode = (trigger_node, open_event) => {
@@ -205,10 +185,10 @@ const initializeModalListener = ({
 		get modal_node() {
 			return modal_node;
 		},
-		open(event = yamodal_fake_open_event) {
+		open(event = createEmptyCustomEvent('yamodal.open')) {
 			return onTriggerOpen(event);
 		},
-		close(event = yamodal_fake_close_event) {
+		close(event = createEmptyCustomEvent('yamodal.close')) {
 			return onTriggerClose(event);
 		},
 		isOpen() {
