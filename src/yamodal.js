@@ -36,8 +36,9 @@ const initializeModalListener = ({
 	onAfterSetup,
 	onDestroy,
 } = {}) => {
-	// Save a few bytes by storing 'function' in a var, refer to this in our `typeof` calls.
+	// Save a few bytes by storing these vars rather than inline strings.
 	const fn = 'function';
+	const click = 'click';
 
 	if (typeof template !== fn) {
 		throw new Error('"template" argument is required, and needs to be a function.');
@@ -134,7 +135,7 @@ const initializeModalListener = ({
 		 * within the modal itself.
 		 */
 		if (close_selector == null) {
-			once(modal_node, 'click', onTriggerClose);
+			once(modal_node, click, onTriggerClose);
 		}
 
 		// Default is to just append the child to the <body>
@@ -186,10 +187,14 @@ const initializeModalListener = ({
 		}
 	};
 
-	const trigger_delegation = delegate(trigger_selector, 'click', onTriggerOpen);
+	const trigger_delegation = delegate(trigger_selector, click, onTriggerOpen);
 	let close_delegation;
-	if (close_selector != null) {
-		close_delegation = delegate(close_selector, 'click', onTriggerClose);
+	if (close_selector !== null) {
+		close_delegation = delegate(
+			no_close_selector_specified ? default_close_selector : close_selector,
+			click,
+			onTriggerClose
+		);
 	}
 
 	const rtn_object = {
