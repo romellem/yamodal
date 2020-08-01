@@ -45,8 +45,12 @@ const initializeModalListener = ({
 	}
 
 	if (trigger_selector === undefined) {
-		if (template.name) {
-			// Not sure if this is the best default...
+		/**
+		 * Only use the named function if it isn't an
+		 * inferred name from our object.
+		 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names
+		 */
+		if (template.name !== 'template') {
 			// @todo consider other defaults
 			trigger_selector = `[data-modal-trigger="${template.name}"]`;
 		} else {
