@@ -9,7 +9,7 @@ import delegate from 'delegate';
  *
  * @param {Function} opt.template The main template function that returns a string of HTML. Called with the passed in `context`. The return value of the template should be a single HTML node.
  * @param {Any|Function} [opt.context] Optional context object to be passed into our template template. If a function is passed, it will be called with `trigger_node` and `event` as its arguments and its return value will be passed to our template.
- * @param {String} [opt.trigger_selector] Selector of the element(s) that when clicked, open our modal. Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function.
+ * @param {String|null} [opt.trigger_selector] Selector of the element(s) that when clicked, open our modal. Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function. If `null` is passed, no delegated event is attached to open, meaning the modal can only be opened via the API.
  * @param {String|null} [opt.close_selector] Selector of the element(s) that when clicked, close its open modal. Defaults to '[data-modal-close]'. If the modal does not contain an element matching `[data-modal-close]` or `null` is passed as this argument then the modal itself will close when clicked.
  * @param {Function} [opt.onAppend] Optional function to append our modal to the DOM. Called with two arguments: `modal_node` and `trigger_node`. Defaults to `document.body.appendChild(modal_node)`.
  * @param {Function} [opt.beforeInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`. If this function returns `false`, modal will _not_ be injected and we bail early.
@@ -191,7 +191,7 @@ const initializeModalListener = ({
 		}
 	};
 
-	const trigger_delegation = delegate(trigger_selector, click, onTriggerOpen);
+	const trigger_delegation = trigger_selector && delegate(trigger_selector, click, onTriggerOpen);
 	let close_delegation;
 	if (close_selector !== null) {
 		close_delegation = delegate(
@@ -231,7 +231,7 @@ const initializeModalListener = ({
 		rtn_object.isOpen = noop;
 
 		// @see https://www.npmjs.com/package/delegate#with-a-single-base-element-default-or-specified
-		trigger_delegation.destroy();
+		trigger_delegation && trigger_delegation.destroy();
 		close_delegation && close_delegation.destroy();
 
 		if (typeof onDestroy === fn) {
