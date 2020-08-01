@@ -115,6 +115,24 @@ describe('yamodal', function () {
 			);
 		});
 
+		it('should not use the default selector when `null` is passed', function () {
+			const button_html = `<button data-modal-trigger="">x</button>`;
+			this.cleanup = jsdom(DOCTYPE + HTML(button_html));
+			let template_result = templates.basic();
+			let modal = yamodal({
+				template: () => template_result,
+				trigger_selector: null,
+			});
+			let button = document.querySelector('[data-modal-trigger]');
+			button.click();
+
+			// It shouldn't open
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${button_html}`)
+			);
+		});
+
 		it('should use the function name for the trigger selector when defined', function () {
 			const button_should_not_trigger = `<button id="wrong" data-modal-trigger="">x</button>`;
 			const button_should_trigger = `<button data-modal-trigger="${templates.basic.name}">x</button>`;
