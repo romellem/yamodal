@@ -230,7 +230,7 @@ yamodal({
 
 #### Option `trigger_selector`
 
-_Type:_ `String`
+_Type:_ `String` or `null`
 
 The selector of the element(s) that will open the modal when clicked.
 
@@ -268,6 +268,29 @@ yamodal({
 yamodal({
     template: () => `<div>2</div>`,
 });
+```
+
+If `null` is passed, no delegated 'click' event is attached to open the modal.
+Instead, the modal can only be opened via its [`open()`](#return-openevent) API
+method.
+
+```js
+yamodal({
+    template: () => `<div>I show on page load!</div>`,
+    onAfterSetup(modal_node, { open }) {
+        open();
+    },
+});
+```
+
+```js
+let modal = yamodal({
+    template: () => `<div>I was opened via my 'open()' API!</div>`,
+});
+
+if (someConditional) {
+    modal.open();
+}
 ```
 
 #### Option `close_selector`
