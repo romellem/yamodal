@@ -1,12 +1,10 @@
 const yamodal = require('../dist/umd/yamodal');
 const assert = require('assert');
 const jsdom = require('global-jsdom');
-const { JSDOM } = require('jsdom');
 
 const templates = require('./templates.js');
 const DOCTYPE = `<!doctype html>`;
-const HTML = (str = '') =>
-	`<html><head><meta charset="utf-8"></head><body>${str}</body></html>`;
+const HTML = (str = '') => `<html><head><meta charset="utf-8"></head><body>${str}</body></html>`;
 
 describe('yamodal', function () {
 	describe('errors', function () {
@@ -36,11 +34,11 @@ describe('yamodal', function () {
 	});
 
 	describe('basic functionality', function () {
-		before(function() {
+		before(function () {
 			this.button_html = `<button id="button" data-modal-trigger="${templates.basic.name}">x</button>`;
 		});
 
-		after(function() {
+		after(function () {
 			this.button_html = undefined;
 		});
 
@@ -72,7 +70,77 @@ describe('yamodal', function () {
 			let button = document.getElementById('button');
 			button.click();
 
-			assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${this.button_html}${template_result}`));
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${this.button_html}${template_result}`)
+			);
+		});
+	});
+
+	describe('trigger selector', function () {
+		afterEach(function () {
+			this.cleanup();
+		});
+
+		it('should allow for specific trigger_selectors', function () {
+			const button_html = `<button id="button">x</button>`;
+			this.cleanup = jsdom(DOCTYPE + HTML(button_html));
+			let template_result = templates.basic();
+			yamodal({
+				template: templates.basic,
+				trigger_selector: '#button',
+			});
+			let button = document.getElementById('button');
+			button.click();
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${button_html}${template_result}`)
+			);
+		});
+
+		it('should use defaults when anonymous templates are used', function () {
+			const button_html = `<button data-modal-trigger="">x</button>`;
+			this.cleanup = jsdom(DOCTYPE + HTML(button_html));
+			let template_result = templates.basic();
+			yamodal({
+				template: () => template_result,
+			});
+			let button = document.querySelector('[data-modal-trigger]');
+			button.click();
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${button_html}${template_result}`)
+			);
+		});
+
+		it('should use the function name for the trigger selector when defined', function () {
+			const button_should_not_trigger = `<button id="wrong" data-modal-trigger="">x</button>`;
+			const button_should_trigger = `<button data-modal-trigger="${templates.basic.name}">x</button>`;
+			const button_html = button_should_not_trigger + button_should_trigger;
+
+			this.cleanup = jsdom(DOCTYPE + HTML(button_html));
+			let template_result = templates.basic();
+			yamodal({
+				template: templates.basic,
+			});
+			let wrong_button = document.querySelector('#wrong');
+			wrong_button.click();
+
+			// Should not trigger modal just yet
+			assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${button_html}`));
+
+			let right_button = document.querySelector(
+				`[data-modal-trigger="${templates.basic.name}"]`
+			);
+			right_button.click();
+
+			// Now modal should be injected
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${button_html}${template_result}`)
+			);
 		});
 	});
 });
