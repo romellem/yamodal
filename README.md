@@ -63,10 +63,12 @@ yamodal({
     context,
 
     // Selector of the element(s) that when clicked, open our modal.
+    // A value of `null` means no 'click' event will be attached to open the modal.
     // Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function.
     trigger_selector,
 
     // Selector of the element(s) that when clicked, close its open modal.
+    // A value of `null` means the modal will close when itself it clicked.
     // Defaults to '[data-modal-close]'.
     close_selector,
 
@@ -188,7 +190,7 @@ The return value of this call is passed to our template. Additionally, when a
 > property from `yamodal()`s return object, it will be `undefined`.
 >
 > Also note if your `context` function relies on the `trigger_node` or `event`
-> arguments, these values will set as `undefined` and a dummy `CustomEvent`
+> arguments, these values will set as `undefined` and a placeholder `CustomEvent`
 > (respectively) when opening the modal with the programmatic
 > [`open()`](#return-openevent) method.
 
@@ -251,14 +253,13 @@ yamodal({
 fallback. Note that this should only be used if you have a **single** modal on the page. Otherwise
 the triggers will open up multiple modals which is probably not your intended result.
 
-> Note our function will have an [inferred name](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names)
-> of `"template"` when using anonymous functions, so this library
-> checks for a `function.name` of `"template"`, and assumes an
-> anonymous function was passed if it finds that.
+> Note our function will always have an [inferred name](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names)
+> of `"template"` when using an anonymous function, so technically this library
+> checks for a `function.name` of `"template"` and assumes an anonymous
+> function was passed if it finds that.
 >
-> If you do want to use a function named `template`, just
-> set the `trigger_selector` directly rather than using a
-> calculated default.
+> If you do want to use a function named `template`, just set the
+> `trigger_selector` directly rather than using a calculated default.
 
 ```js
 // Careful! Both modals will opens when a `<button data-modal-trigger>` is clicked!
@@ -545,7 +546,7 @@ This means that any `beforeInsertIntoDom`, `onAppend`, or `afterInsertIntoDom`
 functions will also run.
 
 Since usually the modal is opened by a click event, programmatic openings have a
-"dummy" event passed in. This dummy event will have a type of `'yamodal.open'`.
+"placeholder" event passed in. This event will have a type of `'yamodal.open'`.
 Optionally, you can send your own custom event to the open handler.
 
 ```js
@@ -561,8 +562,8 @@ _Type:_ `Function`
 When `close()` is run it triggers the same handler that runs when a close element is clicked.
 This means that any `beforeRemoveFromDom`, or `afterRemoveFromDom` functions will also run.
 
-Since usually the modal is closed by a click event, programmatic closings have a
-"dummy" event passed in. This dummy event will have a type of `'yamodal.close'`.
+Since the modal is usually closed by a click event, programmatic closings have a
+"placeholder" event passed in. This event will have a type of `'yamodal.close'`.
 Optionally, you can send your own custom event to the close handler.
 
 #### Return `destroy()`
