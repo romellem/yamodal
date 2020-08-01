@@ -31,6 +31,28 @@
     };
   };
 
+  /**
+   * Creates a CustomEvent without any extra data applied.
+   * @param {String} event_name
+   * @returns {CustomEvent}
+   */
+  var createEmptyCustomEvent = function createEmptyCustomEvent(event_name) {
+    // Reuse `CustomEvent` string to help with minifying
+    var customEvent = 'CustomEvent';
+    var event;
+
+    if (window[customEvent] && typeof window[customEvent] === 'function') {
+      event = new window[customEvent](event_name);
+    } else {
+      // IE doesn't support `CustomEvent` constructor
+      // @link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Browser_compatibility
+      event = document.createEvent(customEvent);
+      event['init' + CustomEvent](event_name, true, true);
+    }
+
+    return event;
+  };
+
   var DOCUMENT_NODE_TYPE = 9;
 
   /**
@@ -148,18 +170,18 @@
    * functionality we may want, such as fade-ins/outs, close on click outside, etc.
    *
    * @param {Function} opt.template The main template function that returns a string of HTML. Called with the passed in `context`. The return value of the template should be a single HTML node.
-   * @param {Any|Function} [opt.context] Optional context object to be passed into our template template. If a function is passed, it should return a plain object to be used as the context.
+   * @param {Any|Function} [opt.context] Optional context object to be passed into our template template. If a function is passed, it will be called with `trigger_node` and `event` as its arguments and its return value will be passed to our template.
    * @param {String} [opt.trigger_selector] Selector of the element(s) that when clicked, open our modal. Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function.
-   * @param {String} [opt.close_selector] Selector of the element(s) that when clicked, close its open modal. Defaults to '[data-modal-close]'. If the modal does not contain an element matching `[data-modal-close]` then the modal itself will close when clicked.
+   * @param {String|null} [opt.close_selector] Selector of the element(s) that when clicked, close its open modal. Defaults to '[data-modal-close]'. If the modal does not contain an element matching `[data-modal-close]` or `null` is passed as this argument then the modal itself will close when clicked.
    * @param {Function} [opt.onAppend] Optional function to append our modal to the DOM. Called with two arguments: `modal_node` and `trigger_node`. Defaults to `document.body.appendChild(modal_node)`.
    * @param {Function} [opt.beforeInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`. If this function returns `false`, modal will _not_ be injected and we bail early.
-   * @param {Function} [opt.afterInsertIntoDom] Optional function that runs before inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`.
+   * @param {Function} [opt.afterInsertIntoDom] Optional function that runs after inserting the modal into the DOM. Called with three arguments: `modal_node`, `trigger_node`, and `event`.
    * @param {String} [opt.remove_modal_after_event_type] When set, the modal is not removed until this event is fired. Otherwise modal is removed immediately from DOM. Some useful event types are 'transitionend' and 'animationend'.
    * @param {Function} [opt.beforeRemoveFromDom] Optional function that runs before removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`. If this function returns `false`, modal will _not_ be removed and we bail early.
    * @param {Function} [opt.afterRemoveFromDom] Optional function that runs after removing the modal from the DOM. Called with three arguments: `modal_node`, `close_node`, and `event`.
    * @param {Function} [opt.onAfterSetup] Optional function that runs once after all event listeners have been setup. Called with `modal_node` and an object with `isOpen`, `open`, `close`, and `destroy` methods.
    * @param {Function} [opt.onDestroy] Optional function that runs additional cleanup steps if we "destroy" our listeners. Called with `modal_node`.
-   * @returns {Object} Returns an object with `modal_node` getter, `isOpen`, `destroy`, `close`, and `open` methods. `open` and `close` will be called with a dummy event arg with a null `delegateTarget`, but you can optionally pass in a custom event.
+   * @returns {Object} Returns an object with `modal_node` getter, `isOpen`, `destroy`, `close`, and `open` methods. `open` and `close` will be called with a dummy CustomEvent, but you can optionally pass your own.
    * @throws {Error} Throws when `template` is not a function, or if it doesn't return a DOM node.
    */
 
@@ -178,16 +200,21 @@
         onAfterSetup = _ref.onAfterSetup,
         onDestroy = _ref.onDestroy;
 
-    // Save a few bytes by storing 'function' in a var, refer to this in our `typeof` calls.
+    // Save a few bytes by storing these vars rather than inline strings.
     var fn = 'function';
+    var click = 'click';
 
     if (_typeof(template) !== fn) {
       throw new Error('"template" argument is required, and needs to be a function.');
     }
 
     if (trigger_selector === undefined) {
-      if (template.name) {
-        // Not sure if this is the best default...
+      /**
+       * Only use the named function if it isn't an
+       * inferred name from our object.
+       * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names
+       */
+      if (template.name !== 'template') {
         // @todo consider other defaults
         trigger_selector = "[data-modal-trigger=\"".concat(template.name, "\"]");
       } else {
@@ -195,11 +222,13 @@
       }
     }
 
-    var createModalNode = function createModalNode() {
+    var modal_is_dynamic = _typeof(context) === fn;
+
+    var createModalNode = function createModalNode(trigger_node, open_event) {
       var template_context = context;
 
-      if (_typeof(context) === fn) {
-        template_context = context();
+      if (modal_is_dynamic) {
+        template_context = context(trigger_node, open_event);
       } // Assumes our template returns a single child node
       // @todo Consider supporting multiple nodes, maybe with Document Fragments?
 
@@ -207,26 +236,43 @@
       var modal_html = template(template_context);
       var dummy_ele = document.createElement('div');
       dummy_ele.innerHTML = modal_html;
-      return dummy_ele.firstElementChild;
+      var child = dummy_ele.firstElementChild;
+
+      if (!child) {
+        throw new Error('"template" must return a DOM node.');
+      }
+
+      return child;
     };
-
-    var modal_node = createModalNode();
-
-    if (!modal_node) {
-      throw new Error('"template" must return a DOM node.');
-    }
     /**
-     * If no `close_selector` was passed, check if `[data-modal-close]` matches an
-     * element within our modal. If not, then reset our close selector which in turn
-     * means that the modal will be closed when itself is clicked.
+     * Only create `modal_node` if we don't have a dynamic context. Otherwise
+     * this will be created when the modal is opened.
      */
 
 
-    if (close_selector === undefined) {
-      close_selector = '[data-modal-close]';
+    var modal_node;
 
-      if (!modal_node.querySelector(close_selector)) {
-        close_selector = undefined;
+    if (!modal_is_dynamic) {
+      modal_node = createModalNode();
+    }
+    /**
+     * If no `close_selector` was passed **and** we have a static modal_node, check if
+     * `[data-modal-close]` matches an element within our modal. If not, then reset our
+     * close selector which in turn means that the modal will be closed when itself is clicked.
+     *
+     * If we do have a dynamic modal, then this check is repeated in our onTriggerOpen
+     * function
+     */
+
+
+    var default_close_selector = '[data-modal-close]';
+    var no_close_selector_specified = false;
+
+    if (close_selector === undefined) {
+      no_close_selector_specified = true;
+
+      if (modal_node && modal_node.querySelector(default_close_selector)) {
+        close_selector = default_close_selector;
       }
     }
 
@@ -240,8 +286,12 @@
 
       var trigger_node = event && event.delegateTarget;
 
-      if (_typeof(context) === fn) {
-        modal_node = createModalNode();
+      if (modal_is_dynamic) {
+        modal_node = createModalNode(trigger_node, event); // Always check for the default close selector if none was specified for a dynamic modal
+
+        if (no_close_selector_specified && modal_node.querySelector(default_close_selector)) {
+          close_selector = default_close_selector;
+        }
       }
 
       if (_typeof(beforeInsertIntoDom) === fn) {
@@ -253,14 +303,14 @@
         }
       }
       /**
-       * If no close_selector is set, then add a click listener to the modal that closes itself.
+       * If no close_selector is set (or is `null`), then add a click listener to the modal that closes itself.
        * Note that this only happens if the default `[data-modal-close]` is not found
        * within the modal itself.
        */
 
 
-      if (close_selector === undefined) {
-        once(modal_node, 'click', onTriggerClose);
+      if (close_selector == null) {
+        once(modal_node, click, onTriggerClose);
       } // Default is to just append the child to the <body>
 
 
@@ -313,11 +363,11 @@
       }
     };
 
-    var trigger_delegation = delegate_1(trigger_selector, 'click', onTriggerOpen);
+    var trigger_delegation = delegate_1(trigger_selector, click, onTriggerOpen);
     var close_delegation;
 
-    if (close_selector !== undefined) {
-      close_delegation = delegate_1(close_selector, 'click', onTriggerClose);
+    if (close_selector !== null) {
+      close_delegation = delegate_1(no_close_selector_specified ? default_close_selector : close_selector, click, onTriggerClose);
     }
 
     var rtn_object = {
@@ -326,10 +376,12 @@
         return modal_node;
       },
 
-      open: function open(event) {
+      open: function open() {
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.open');
         return onTriggerOpen(event);
       },
-      close: function close(event) {
+      close: function close() {
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.close');
         return onTriggerClose(event);
       },
       isOpen: function isOpen() {
@@ -405,6 +457,14 @@
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n            This value was dynamically loaded via <code>context</code>:\n            <ul><li>".concat(context, "</li></ul>\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
+  var template$8 = function template(href) {
+    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n            Continue to <strong>".concat(href, "</strong>?\n            <br>\n            <a href=\"").concat(href, "\">Yes</a> | <a href=\"javascript:void(0)\" data-modal-close>No</a>\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
+  };
+
+  var template$9 = function template(event) {
+    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'yamodal.open' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
+  };
+
   initializeModalListener({
     template: template$1,
     trigger_selector: '[data-modal-trigger="basic"]'
@@ -432,13 +492,13 @@
     remove_modal_after_event_type: 'animationend',
     beforeInsertIntoDom: function beforeInsertIntoDom(modal_node) {
       var inner_modal = modal_node.querySelector('.modal');
-      inner_modal.classList.add('roll-in-blurred-left');
-      inner_modal.classList.remove('roll-out-blurred-left');
+      inner_modal.classList.add('tilt-in-fwd-tr');
+      inner_modal.classList.remove('slide-out-elliptic-top-bck');
     },
     beforeRemoveFromDom: function beforeRemoveFromDom(modal_node) {
       var inner_modal = modal_node.querySelector('.modal');
-      inner_modal.classList.remove('roll-in-blurred-left');
-      inner_modal.classList.add('roll-out-blurred-left');
+      inner_modal.classList.remove('tilt-in-fwd-tr');
+      inner_modal.classList.add('slide-out-elliptic-top-bck');
     }
   }); // Body scroll lock
 
@@ -525,6 +585,34 @@
     trigger_selector: '[data-modal-trigger="dynamic-context"]',
     context: function context() {
       return Math.random();
+    }
+  }); // Link with an interstitial
+
+  initializeModalListener({
+    template: template$8,
+    trigger_selector: '[data-modal-trigger="interstitial"]',
+    beforeInsertIntoDom: function beforeInsertIntoDom(modal_node, trigger_node, event) {
+      event.preventDefault();
+    },
+    context: function context(trigger_node) {
+      return trigger_node.href;
+    }
+  }); // Reading the custom `event` that is passed when `open()` is called
+
+  var modal = initializeModalListener({
+    template: template$9,
+    trigger_selector: '[data-modal-trigger="dynamic-context-reading-event"]',
+    context: function context(trigger_node, event) {
+      return event;
+    }
+  });
+  var number_input = document.getElementById('number-input');
+  number_input.addEventListener('input', function (e) {
+    var num = parseInt(e.target.value, 10);
+    if (window.isNaN(num)) return;
+
+    if (num % 5 === 0) {
+      modal.open();
     }
   });
 
