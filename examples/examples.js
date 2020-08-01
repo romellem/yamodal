@@ -7,6 +7,8 @@ import clickOutside from './templates/click-outside.js';
 import closeOnEscape from './templates/close-on-esc.js';
 import autoOpenOnHashParam from './templates/auto-open-on-hash-param.js';
 import dynamicContext from './templates/dynamic-context.js';
+import interstitial from './templates/interstitial.js';
+import dynamicContextReadingEvent from './templates/dynamic-context-reading-event.js';
 
 // Basic example (click modal to close)
 yamodal({
@@ -38,13 +40,13 @@ yamodal({
 	remove_modal_after_event_type: 'animationend',
 	beforeInsertIntoDom(modal_node) {
 		let inner_modal = modal_node.querySelector('.modal');
-		inner_modal.classList.add('roll-in-blurred-left');
-		inner_modal.classList.remove('roll-out-blurred-left');
+		inner_modal.classList.add('tilt-in-fwd-tr');
+		inner_modal.classList.remove('slide-out-elliptic-top-bck');
 	},
 	beforeRemoveFromDom(modal_node) {
 		let inner_modal = modal_node.querySelector('.modal');
-		inner_modal.classList.remove('roll-in-blurred-left');
-		inner_modal.classList.add('roll-out-blurred-left');
+		inner_modal.classList.remove('tilt-in-fwd-tr');
+		inner_modal.classList.add('slide-out-elliptic-top-bck');
 	},
 });
 
@@ -129,4 +131,34 @@ yamodal({
 	template: dynamicContext,
 	trigger_selector: '[data-modal-trigger="dynamic-context"]',
 	context: () => Math.random(),
+});
+
+// Link with an interstitial
+yamodal({
+	template: interstitial,
+	trigger_selector: '[data-modal-trigger="interstitial"]',
+	beforeInsertIntoDom(modal_node, trigger_node, event) {
+		event.preventDefault();
+	},
+	context(trigger_node) {
+		return trigger_node.href;
+	},
+});
+
+// Reading the custom `event` that is passed when `open()` is called
+let modal = yamodal({
+	template: dynamicContextReadingEvent,
+	trigger_selector: '[data-modal-trigger="dynamic-context-reading-event"]',
+	context(trigger_node, event) {
+		return event;
+	},
+});
+
+let number_input = document.getElementById('number-input');
+number_input.addEventListener('input', e => {
+	let num = parseInt(e.target.value, 10);
+	if (window.isNaN(num)) return;
+	if (num % 5 === 0) {
+		modal.open();
+	}
 });

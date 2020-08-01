@@ -51,6 +51,7 @@
 				font-family: monospace;
 				font-size: 3rem;
 				line-height: 1;
+				text-align: center;
 				text-decoration: underline;
 				-webkit-text-decoration-color: var(--blue);
 				text-decoration-color: var(--blue);
@@ -78,6 +79,11 @@
 				text-decoration: none;
 			}
 
+			a.button {
+				color: var(--black);
+				text-decoration: none;
+			}
+
 			.overlay {
 				position: fixed;
 				top: 0;
@@ -100,13 +106,15 @@
 				justify-content: center;
 				align-items: center;
 				text-align: center;
+				word-break: break-all;
 
 				border-radius: 50px;
 				background: linear-gradient(145deg, #e4e6e3, #ffffff);
 				box-shadow: 20px 20px 60px #d7d9d6cc, -20px -20px 60px #ffffffcc;
 			}
 
-			button {
+			button,
+			.button {
 				/* button reset */
 				font: inherit;
 				line-height: normal;
@@ -119,7 +127,8 @@
 				background: transparent;
 			}
 
-			button {
+			button,
+			.button {
 				font-size: 1rem;
 				line-height: 1.5;
 				cursor: pointer;
@@ -127,6 +136,13 @@
 				background: linear-gradient(145deg, #ffffff, #e4e6e3);
 				box-shadow: 5px 5px 10px #dfe0de, -5px -5px 10px #ffffff;
 				padding: 0.25rem 0.5rem;
+			}
+
+			input {
+				font-size: 1rem;
+				line-height: 1.5;
+				padding: 0.25rem 0.5rem;
+				width: 3rem;
 			}
 
 			.overlay button[data-modal-close],
@@ -162,34 +178,35 @@
 			 * w: http://animista.net, t: @cssanimista
 			 * ---------------------------------------------- */
 
-			.roll-in-blurred-left {
-				animation: roll-in-blurred-left 0.65s cubic-bezier(0.23, 1, 0.32, 1) both;
+			.tilt-in-fwd-tr {
+				animation: tilt-in-fwd-tr 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 			}
-			.roll-out-blurred-left {
-				animation: roll-out-blurred-left 0.65s cubic-bezier(0.755, 0.05, 0.855, 0.06) both;
+			.slide-out-elliptic-top-bck {
+				animation: slide-out-elliptic-top-bck 0.7s ease-in both;
 			}
-			@keyframes roll-in-blurred-left {
+
+			@keyframes tilt-in-fwd-tr {
 				0% {
-					transform: translateX(-1000px) rotate(-720deg);
-					filter: blur(50px);
+					transform: rotateY(20deg) rotateX(35deg) translate(300px, -300px)
+						skew(-35deg, 10deg);
 					opacity: 0;
 				}
 				100% {
-					transform: translateX(0) rotate(0deg);
-					filter: blur(0);
+					transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg);
 					opacity: 1;
 				}
 			}
-			@keyframes roll-out-blurred-left {
+
+			@keyframes slide-out-elliptic-top-bck {
 				0% {
-					transform: translateX(0) rotate(0deg);
-					filter: blur(0);
+					transform: translateY(0) rotateX(0) scale(1);
+					transform-origin: 50% 1400px;
 					opacity: 1;
 				}
 				100% {
-					transform: translateX(-1000px) rotate(-720deg);
-					filter: blur(50px);
-					opacity: 0;
+					transform: translateY(-600px) rotateX(-30deg) scale(0);
+					transform-origin: 50% 100%;
+					opacity: 1;
 				}
 			}
 
@@ -232,6 +249,24 @@
 					</button>
 				</li>
 				<li><button data-modal-trigger="dynamic-context">Dynamic context</button></li>
+				<li>
+					<a
+						data-modal-trigger="interstitial"
+						href="https://github.com/Designory/yamodal"
+						class="button"
+						>Interstitial Link</a
+					>
+				</li>
+				<li>
+					<p>
+						Click the button below to open the modal directly, or change the input to a
+						multiple of <em>5</em> to open the modal via the <code>open()</code> method.
+					</p>
+					<input type="number" id="number-input" value="1" />
+					<button data-modal-trigger="dynamic-context-reading-event">
+						Direct and programmatic opening
+					</button>
+				</li>
 			</ul>
 			<hr />
 		</main>

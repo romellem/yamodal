@@ -57,17 +57,20 @@ yamodal({
     template: (context) => '<div>My Modal</div>',
 
     // Optional context to be passed into our template function.
-    // If a function is passed, it will be executed and its return value will be passed to our template.
+    // If a function is passed, it will be called with `trigger_node` and `event`
+    // as its arguments and its return value will be passed to our template.
     // Function contexts get executed each time before the modal is inserted, allowing for dynamic modal content.
     context,
 
     // Selector of the element(s) that when clicked, open our modal.
+    // A value of `null` means no 'click' event will be attached to open the modal.
     // Defaults to '[data-modal-trigger="${template.name}"]' or '[data-modal-trigger]' if template is an anonymous function.
     trigger_selector,
 
     // Selector of the element(s) that when clicked, close its open modal.
+    // A value of `null` means the modal will close when itself it clicked.
     // Defaults to '[data-modal-close]'.
-    close_selector
+    close_selector,
 
     // Optional function to append our modal to the DOM.
     // Called with three arguments: `modal_node`, `trigger_node`and the opening `event`.
@@ -79,7 +82,7 @@ yamodal({
     // Called with three arguments: `modal_node`, `trigger_node`, and the opening `event`.
     beforeInsertIntoDom(modal_node, trigger_node, event){ ... },
 
-    // Optional function that runs before inserting the modal into the DOM.
+    // Optional function that runs after inserting the modal into the DOM.
     // Called with three arguments: `modal_node`, `trigger_node`, and the opening `event`.
     afterInsertIntoDom(modal_node, trigger_node, event){ ... },
 
@@ -177,9 +180,19 @@ function returns an HTML string that contains a single DOM node, it'll work!
 _Type:_ _`Any`_ or `Function`
 
 Any value that is passed to the `template` function. If `context` is itself
-a function, its return value is passed to our template. Additionally, when a
+a function, it will be called with `trigger_node` and `event` arguments.
+The return value of this call is passed to our template. Additionally, when a
 `context()` function is used, we recreate our `modal_node` just prior to opening
 (it is executed before the `beforeInsertIntoDom` callback).
+
+> Note: If a function is passed in for `context` then we don't create the modal
+> immediately. We only create it when it is opened. So, if you grab the `modal_node`
+> property from `yamodal()`s return object, it will be `undefined`.
+>
+> Also note if your `context` function relies on the `trigger_node` or `event`
+> arguments, these values will set as `undefined` and a placeholder `CustomEvent`
+> (respectively) when opening the modal with the programmatic
+> [`open()`](#return-openevent) method.
 
 ```js
 yamodal({
@@ -195,9 +208,31 @@ yamodal({
 });
 ```
 
+```js
+// <a href="http://example.com" data-modal-trigger>3rd party link</a>
+yamodal({
+    template: url => `<div>Continue? <a href="${url}">Link</a></div>`,
+    beforeInsertIntoDom(modal, trigger, event){
+        event.preventDefault();
+    },
+    context(trigger_node) {
+        return trigger_node.href;
+    },
+});
+```
+
+```js
+yamodal({
+    template: event => `<div>This was opened via ${event.type === 'yamodal.open' ? 'the open() API' : 'a click'}</div>`,
+    context(trigger_node, event) {
+        return event;
+    },
+});
+```
+
 #### Option `trigger_selector`
 
-_Type:_ `String`
+_Type:_ `String` or `null`
 
 The selector of the element(s) that will open the modal when clicked.
 
@@ -218,6 +253,14 @@ yamodal({
 fallback. Note that this should only be used if you have a **single** modal on the page. Otherwise
 the triggers will open up multiple modals which is probably not your intended result.
 
+> Note our function will always have an [inferred name](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names)
+> of `"template"` when using an anonymous function, so technically this library
+> checks for a `function.name` of `"template"` and assumes an anonymous
+> function was passed if it finds that.
+>
+> If you do want to use a function named `template`, just set the
+> `trigger_selector` directly rather than using a calculated default.
+
 ```js
 // Careful! Both modals will opens when a `<button data-modal-trigger>` is clicked!
 yamodal({
@@ -228,17 +271,40 @@ yamodal({
 });
 ```
 
+If `null` is passed, no delegated 'click' event is attached to open the modal.
+Instead, the modal can only be opened via its [`open()`](#return-openevent) API
+method.
+
+```js
+yamodal({
+    template: () => `<div>I show on page load!</div>`,
+    onAfterSetup(modal_node, { open }) {
+        open();
+    },
+});
+```
+
+```js
+let modal = yamodal({
+    template: () => `<div>I was opened via my 'open()' API!</div>`,
+});
+
+if (someConditional) {
+    modal.open();
+}
+```
+
 #### Option `close_selector`
 
-_Type:_ `String`
+_Type:_ `String` or `null`
 
 The selector of the element(s) that will close the currently opened modal when clicked.
 Note that these elements do _not_ have to be children elements of the modal. They can
 exist anywhere on the document.
 
 If no option is passed, the modal node checks for a child that matches the selector
-`[data-modal-close]`. If no element is found, then the modal itself has the close
-handler attached to it.
+`[data-modal-close]`. If no element is found or `close_selector` is `null`, then the
+modal itself has the close handler attached to it.
 
 ```js
 yamodal({
@@ -471,7 +537,7 @@ _Type:_ `Function`
 
 When `isOpen()` is run, it returns `true` if the current modal is open, `false` if otherwise.
 
-#### Return `open(event)`
+#### Return `open(event = new CustomEvent('yamodal.open'))`
 
 _Type:_ `Function`
 
@@ -479,8 +545,9 @@ When `open()` is run it triggers the same handler that runs when a trigger is cl
 This means that any `beforeInsertIntoDom`, `onAppend`, or `afterInsertIntoDom`
 functions will also run.
 
-Optionally you can send a custom event to the open handler. For this manual call,
-this defaults to `undefined`.
+Since usually the modal is opened by a click event, programmatic openings have a
+"placeholder" event passed in. This event will have a type of `'yamodal.open'`.
+Optionally, you can send your own custom event to the open handler.
 
 ```js
 // Automatically open our modal after a 1 second delay
@@ -488,15 +555,16 @@ var my_modal = yamodal({ ... });
 setTimeout(() => my_modal.open(), 1000);
 ```
 
-#### Return `close(event)`
+#### Return `close(event = new CustomEvent('yamodal.close'))`
 
 _Type:_ `Function`
 
 When `close()` is run it triggers the same handler that runs when a close element is clicked.
 This means that any `beforeRemoveFromDom`, or `afterRemoveFromDom` functions will also run.
 
-Optionally you can send a custom event to the close handler. For this manual call,
-this defaults to `undefined`.
+Since the modal is usually closed by a click event, programmatic closings have a
+"placeholder" event passed in. This event will have a type of `'yamodal.close'`.
+Optionally, you can send your own custom event to the close handler.
 
 #### Return `destroy()`
 
@@ -528,6 +596,7 @@ for a list of common "advanced" modal uses, such as:
 - Close on `ESC` key press.
 - Dynamic modal (from context).
 - Auto open based on some condition (hash parameter in URL).
+- Interstitial before navigating to a link.
 
 ## Browser Support
 

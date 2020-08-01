@@ -31,6 +31,9 @@ pids
 # Output of 'npm pack'
 *.tgz
 
+# nyc / instanbul test coverage
+.nyc_output/
+
 # Yarn Integrity file
 .yarn-integrity
 
