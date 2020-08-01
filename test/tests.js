@@ -143,4 +143,93 @@ describe('yamodal', function () {
 			);
 		});
 	});
+
+	describe('close selector', function () {
+		afterEach(function () {
+			this.cleanup();
+		});
+
+		it('should allow for specific close_selectors', function () {
+			const open_html = `<button id="open">x</button>`;
+			const close_html = `<button id="close">x</button>`;
+			this.cleanup = jsdom(DOCTYPE + HTML(open_html));
+			let template_result = templates.basicWithClose(close_html);
+			yamodal({
+				template: () => template_result,
+				trigger_selector: '#open',
+				close_selector: '#close',
+			});
+			let open = document.getElementById('open');
+			open.click();
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${open_html}${template_result}`)
+			);
+
+			let close = document.getElementById('close');
+			close.click();
+
+			assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${open_html}`));
+		});
+
+		it('should use defaults when no close_selector is passed', function () {
+			const open_html = `<button id="open">x</button>`;
+			const close_html = `<button id="fake">x</button><button data-modal-close="" id="real">x</button>`;
+			this.cleanup = jsdom(DOCTYPE + HTML(open_html));
+			let template_result = templates.basicWithClose(close_html);
+			yamodal({
+				template: () => template_result,
+				trigger_selector: '#open',
+			});
+			let open = document.getElementById('open');
+			open.click();
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${open_html}${template_result}`)
+			);
+
+			let fake_close = document.getElementById('fake');
+			fake_close.click();
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${open_html}${template_result}`)
+			);
+
+			let real_close = document.querySelector('[data-modal-close]');
+			real_close.click();
+
+			assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${open_html}`));
+		});
+
+		it('should use the modal itself when modal does not contain default close selector or is set to `null`', function () {
+			for (let close_selector of [undefined, null]) {
+				const open_html = `<button id="open">x</button>`;
+				this.cleanup = jsdom(DOCTYPE + HTML(open_html));
+				let template_result = templates.basic();
+				yamodal({
+					template: () => template_result,
+					trigger_selector: '#open',
+					close_selector,
+				});
+				let open = document.getElementById('open');
+				open.click();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${open_html}${template_result}`)
+				);
+
+				let modal = document.getElementById('modal');
+				modal.click();
+
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${open_html}`));
+
+				// It's OK that this runs twice
+				this.cleanup();
+			}
+		});
+	});
 });
