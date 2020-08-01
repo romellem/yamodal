@@ -224,8 +224,7 @@ const initializeModalListener = ({
 		}
 
 		// Reset return functions so they can no longer be called
-		// prettier-ignore
-		const noop = () => console.log(`yamodal instance was destroyed, returned methods can no longer be called.`);
+		const noop = () => {};
 		rtn_object.destroy = noop;
 		rtn_object.open = noop;
 		rtn_object.close = noop;
