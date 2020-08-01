@@ -251,6 +251,15 @@ yamodal({
 fallback. Note that this should only be used if you have a **single** modal on the page. Otherwise
 the triggers will open up multiple modals which is probably not your intended result.
 
+> Note our function will have an [inferred name](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#Inferred_function_names)
+> of `"template"` when using anonymous functions, so this library
+> checks for a `function.name` of `"template"`, and assumes an
+> anonymous function was passed if it finds that.
+>
+> If you do want to use a function named `template`, just
+> set the `trigger_selector` directly rather than using a
+> calculated default.
+
 ```js
 // Careful! Both modals will opens when a `<button data-modal-trigger>` is clicked!
 yamodal({
