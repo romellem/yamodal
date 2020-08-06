@@ -404,4 +404,45 @@ describe('yamodal', function () {
 			}
 		});
 	});
+
+	describe('afterInsertIntoDom callback', function () {
+		before(function () {
+			this.button_html = `<button id="button" data-modal-trigger="${templates.basic.name}">x</button>`;
+		});
+
+		after(function () {
+			this.button_html = undefined;
+		});
+
+		beforeEach(function () {
+			this.spiedAfterInsertIntoDom = sinon.spy(function afterInsertIntoDom(modal_node, trigger_node, event) {
+				// Do nothing
+			});
+			this.cleanup = jsdom(DOCTYPE + HTML(this.button_html));
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `afterInsertIntoDom` with exactly three arguments', function () {
+			yamodal({
+				template: templates.basic,
+				afterInsertIntoDom: this.spiedAfterInsertIntoDom,
+			});
+
+			let button = document.getElementById('button');
+			button.click();
+
+			const window = document.defaultView;
+			let [modal_node, trigger_node, event, ...others] = this.spiedAfterInsertIntoDom.getCall(0).args;
+
+			assert.ok(this.spiedAfterInsertIntoDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(trigger_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+	});
 });
