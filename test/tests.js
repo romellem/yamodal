@@ -373,5 +373,34 @@ describe('yamodal', function () {
 				HTML(this.button_html)
 			);
 		});
+
+		it('should still open the modal if `beforeInsertIntoDom` returns a falsy value different from `false`', function () {
+			// Not including `false` (obviously) and BigInt `0n`
+			const falsy_values = [0, null, undefined, NaN, ''];
+			for (let falsy_value of falsy_values) {
+				this.cleanup = jsdom(DOCTYPE + HTML(this.button_html));
+				const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(modal_node, trigger_node, event) {
+					return falsy_value;
+				});
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+					beforeInsertIntoDom: spiedBeforeInsertIntoDom,
+				});
+
+				let button = document.getElementById('button');
+				button.click();
+
+				// Still opens
+				assert.strictEqual(modal.isOpen(), true);
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.button_html}${template_result}`)
+				);
+
+				this.cleanup();
+				sinon.restore();
+			}
+		});
 	});
 });
