@@ -388,6 +388,7 @@ describe('yamodal', function () {
 					beforeInsertIntoDom: spiedBeforeInsertIntoDom,
 				});
 
+				assert.strictEqual(modal.isOpen(), false);
 				let button = document.getElementById('button');
 				button.click();
 
