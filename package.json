@@ -39,7 +39,8 @@
     "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-livereload": "^1.0.4",
     "rollup-plugin-serve": "^1.0.1",
-    "rollup-plugin-terser": "^6.1.0"
+    "rollup-plugin-terser": "^6.1.0",
+    "sinon": "^9.0.2"
   },
   "keywords": [
     "modal",
