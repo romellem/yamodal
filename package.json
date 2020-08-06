@@ -34,7 +34,7 @@
     "jsdom": "^16.3.0",
     "mocha": "^8.1.1",
     "nyc": "^15.1.0",
-    "rollup": "^2.9.0",
+    "rollup": "^2.23.0",
     "rollup-plugin-filesize": "^9.0.0",
     "rollup-plugin-livereload": "^1.0.4",
     "rollup-plugin-serve": "^1.0.1",
