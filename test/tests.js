@@ -1,6 +1,7 @@
 import yamodal from '../dist/umd/yamodal';
 import assert from 'assert';
 import jsdom from 'global-jsdom';
+import sinon from 'sinon';
 
 import * as templates from './templates.js';
 const DOCTYPE = `<!doctype html>`;
@@ -270,6 +271,47 @@ describe('yamodal', function () {
 				// It's OK that this runs twice
 				this.cleanup();
 			}
+		});
+	});
+
+	describe('onAppend callback', function () {
+		before(function () {
+			this.button_html = `<button id="button" data-modal-trigger="${templates.basic.name}">x</button>`;
+		});
+
+		after(function () {
+			this.button_html = undefined;
+		});
+
+		beforeEach(function () {
+			this.spiedOnAppend = sinon.spy(function onAppend(modal_node, trigger_node, event) {
+				document.body.insertBefore(modal_node, document.body.firstChild);
+			});
+			this.cleanup = jsdom(DOCTYPE + HTML(this.button_html));
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `onAppend` with exactly three arguments', function () {
+			yamodal({
+				template: templates.basic,
+				onAppend: this.spiedOnAppend,
+			});
+
+			let button = document.getElementById('button');
+			button.click();
+
+			const window = document.defaultView;
+			let [modal_node, trigger_node, event, ...others] = this.spiedOnAppend.getCall(0).args;
+
+			assert.ok(this.spiedOnAppend.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(trigger_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
 		});
 	});
 });
