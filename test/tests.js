@@ -314,4 +314,64 @@ describe('yamodal', function () {
 			assert.strictEqual(others.length, 0);
 		});
 	});
+
+	describe('beforeInsertIntoDom callback', function () {
+		before(function () {
+			this.button_html = `<button id="button" data-modal-trigger="${templates.basic.name}">x</button>`;
+		});
+
+		after(function () {
+			this.button_html = undefined;
+		});
+
+		beforeEach(function () {
+			this.cleanup = jsdom(DOCTYPE + HTML(this.button_html));
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `beforeInsertIntoDom` with exactly three arguments', function () {
+			const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(modal_node, trigger_node, event) {
+				// Do nothing
+			});
+			yamodal({
+				template: templates.basic,
+				beforeInsertIntoDom: spiedBeforeInsertIntoDom,
+			});
+
+			let button = document.getElementById('button');
+			button.click();
+
+			const window = document.defaultView;
+			let [modal_node, trigger_node, event, ...others] = spiedBeforeInsertIntoDom.getCall(0).args;
+
+			assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(trigger_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+
+		it('should not open the modal if `beforeInsertIntoDom` returns false', function () {
+			const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(modal_node, trigger_node, event) {
+				return false;
+			});
+			let modal = yamodal({
+				template: templates.basic,
+				beforeInsertIntoDom: spiedBeforeInsertIntoDom,
+			});
+
+			let button = document.getElementById('button');
+			button.click();
+
+			assert.strictEqual(modal.isOpen(), false);
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(this.button_html)
+			);
+		});
+	});
 });
