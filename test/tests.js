@@ -75,6 +75,28 @@ describe('yamodal', function () {
 				HTML(`${this.button_html}${template_result}`)
 			);
 		});
+
+		it('should trim whitespace on templates', function () {
+			// Add whitespace before and after
+			let template_result = ` ${templates.basic()} `;
+			yamodal({
+				template: function basic() {
+					return template_result;
+				},
+			});
+			let button = document.getElementById('button');
+			button.click();
+
+			assert.notStrictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${this.button_html}${template_result}`)
+			);
+
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${this.button_html}${template_result.trim()}`)
+			);
+		});
 	});
 
 	describe('trigger selector', function () {
