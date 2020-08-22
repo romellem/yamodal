@@ -660,6 +660,93 @@ describe('yamodal', function () {
 				assert.strictEqual(modal.isOpen(), false);
 			});
 		});
+
+		describe('destroy API', function () {
+			before(function () {
+				this.open_html = `<button id="open">open</button>`;
+				this.close_html = `<button id="close">close</button>`;
+			});
+	
+			after(function () {
+				this.open_html = undefined;
+				this.close_html = undefined;
+			});
+	
+			beforeEach(function () {
+				this.spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
+					modal_node,
+					trigger_node,
+					event
+				) {
+					// Do nothing
+				});
+				this.spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+					modal_node,
+					trigger_node,
+					event
+				) {
+					// Do nothing
+				});
+				this.cleanup = jsdom(DOCTYPE + HTML(`${this.open_html}${this.close_html}`));
+			});
+	
+			afterEach(function () {
+				sinon.restore();
+				this.cleanup();
+			});
+
+			it('Calling `destroy()` removes our click handlers', function () {
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+					trigger_selector: '#open',
+					close_selector: '#close',
+					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
+					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
+				});
+
+				let open_button = document.getElementById('open');
+				let close_button = document.getElementById('close');
+
+				open_button.click();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}${template_result}`)
+				);
+				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(this.spiedBeforeRemoveFromDom.notCalled);
+
+				close_button.click();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}`)
+				);
+				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+
+				modal.destroy();
+
+				open_button.click();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}`)
+				);
+				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+
+				close_button.click();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}`)
+				);
+				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+			});
+		});
 	});
 
 	describe('context', function () {
