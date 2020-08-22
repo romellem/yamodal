@@ -1,4 +1,7 @@
 import yamodal from '../dist/umd/yamodal';
+import createEmptyCustomEvent from '../src/utils/custom-event';
+import once from '../src/utils/once-event-listener';
+
 import assert from 'assert';
 import jsdom from 'global-jsdom';
 import sinon from 'sinon';
@@ -6,6 +9,76 @@ import sinon from 'sinon';
 import * as templates from './templates.js';
 const DOCTYPE = `<!doctype html>`;
 const HTML = (str = '') => `<html><head><meta charset="utf-8"></head><body>${str}</body></html>`;
+
+describe('utilies', function () {
+	beforeEach(function () {
+		this.cleanup = jsdom();
+	});
+
+	afterEach(function () {
+		this.cleanup();
+	});
+
+	describe('once event listener', function () {
+		it('should call event handler only once', function () {
+			const window = document.defaultView;
+			let spy = sinon.spy();
+
+			once(window, 'click', spy);
+
+			assert.ok(spy.notCalled);
+
+			// Trigger a click
+			let first_click = document.createEvent('HTMLEvents');
+			first_click.initEvent('click', true, false);
+			window.dispatchEvent(first_click);
+
+			assert.ok(spy.calledOnce);
+
+			// Trigger a second click
+			let second_click = document.createEvent('HTMLEvents');
+			second_click.initEvent('click', true, false);
+			window.dispatchEvent(second_click);
+
+			assert.ok(spy.calledOnce);
+		});
+
+		it('should use remove event listener with "destroy" return function', function () {
+			const window = document.defaultView;
+			let spy = sinon.spy();
+
+			let destroy = once(window, 'click', spy);
+
+			assert.strictEqual(typeof destroy, 'function');
+			assert.ok(spy.notCalled);
+
+			destroy();
+
+			let first_click = document.createEvent('HTMLEvents');
+			first_click.initEvent('click', true, false);
+			window.dispatchEvent(first_click);
+
+			assert.ok(spy.notCalled);
+		});
+	});
+
+	describe('createEmptyCustomEvent', function () {
+		it('should use `CustomEvent` when supportde', function () {
+			const window = document.defaultView;
+
+			let event = createEmptyCustomEvent('test');
+			assert.ok(event instanceof window.Event);
+		});
+
+		it('should use polyfill when `CustomEvent` is not available', function () {
+			const window = document.defaultView;
+			delete window.CustomEvent;
+
+			let event = createEmptyCustomEvent('test');
+			assert.ok(event instanceof window.Event);
+		});
+	});
+});
 
 describe('yamodal', function () {
 	describe('errors', function () {
