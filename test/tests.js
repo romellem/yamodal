@@ -494,6 +494,26 @@ describe('yamodal', function () {
 			});
 		});
 
+		describe('modal_node API', function () {
+			beforeEach(function () {
+				this.cleanup = jsdom(DOCTYPE + HTML());
+			});
+
+			afterEach(function () {
+				this.cleanup();
+			});
+
+			it('Getting `modal_node` returns the modal Element', function () {
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
+				});
+
+				assert.strictEqual(modal.modal_node.outerHTML, template_result);
+			});
+		});
+
 		describe('open API', function () {
 			beforeEach(function () {
 				this.spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
