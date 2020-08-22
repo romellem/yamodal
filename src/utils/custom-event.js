@@ -13,7 +13,7 @@ const createEmptyCustomEvent = (event_name) => {
 		// IE doesn't support `CustomEvent` constructor
 		// @link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Browser_compatibility
 		event = document.createEvent(customEvent);
-		event['init' + CustomEvent](event_name, true, true);
+		event['init' + customEvent](event_name, true, true);
 	}
 
 	return event;
