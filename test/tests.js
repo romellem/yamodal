@@ -588,10 +588,7 @@ describe('yamodal', function () {
 				modal.close();
 				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
 
-				assert.strictEqual(
-					global.document.documentElement.outerHTML,
-					HTML()
-				);
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
 			});
 
 			it('Calling `close()` multiple times does nothing while modal is closed', function () {
@@ -608,6 +605,40 @@ describe('yamodal', function () {
 
 				modal.close();
 				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+			});
+		});
+
+		describe('isOpen API', function () {
+			beforeEach(function () {
+				this.cleanup = jsdom(DOCTYPE + HTML());
+			});
+
+			afterEach(function () {
+				this.cleanup();
+			});
+
+			it('Calling `isOpen()` returns the state of the modal', function () {
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
+				});
+
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+				assert.strictEqual(modal.isOpen(), false);
+
+				modal.open();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(template_result)
+				);
+				assert.strictEqual(modal.isOpen(), true);
+
+				modal.close();
+
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+				assert.strictEqual(modal.isOpen(), false);
 			});
 		});
 	});
