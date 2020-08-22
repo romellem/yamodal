@@ -803,6 +803,48 @@ describe('yamodal', function () {
 	describe('context', function () {
 		describe('static context', function () {});
 
-		describe('dynamic context', function () {});
+		describe('dynamic context', function () {
+			beforeEach(function () {
+				let random_context_return = String(Math.random());
+				this.random_context_return = random_context_return;
+				this.spiedContext = sinon.spy(function context(trigger_node, event) {
+					return random_context_return;
+				});
+				this.cleanup = jsdom(DOCTYPE + HTML());
+			});
+
+			afterEach(function () {
+				this.random_context_return;
+				sinon.restore();
+				this.cleanup();
+			});
+
+			it('should not immediately create a modal_node when a dynamic context is passed', function () {
+				let modal = yamodal({
+					template: templates.basic,
+					context: this.spiedContext,
+				});
+
+				assert.strictEqual(modal.modal_node, undefined);
+				assert.ok(this.spiedContext.notCalled);
+			});
+
+			it(`should pass context's return value to template`, function () {
+				let spiedTemplate = sinon.spy(templates.basicWithContext);
+				let modal = yamodal({
+					template: spiedTemplate,
+					context: this.spiedContext,
+				});
+
+				modal.open();
+				assert.ok(this.spiedContext.calledOnce);
+				assert.ok(spiedTemplate.calledOnceWith(this.random_context_return));
+				spiedTemplate.calledAfter(this.spiedContext);
+
+				modal.close();
+				assert.ok(this.spiedContext.calledOnce);
+				assert.ok(spiedTemplate.calledOnceWith(this.random_context_return));
+			});
+		});
 	});
 });
