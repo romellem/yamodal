@@ -666,12 +666,12 @@ describe('yamodal', function () {
 				this.open_html = `<button id="open">open</button>`;
 				this.close_html = `<button id="close">close</button>`;
 			});
-	
+
 			after(function () {
 				this.open_html = undefined;
 				this.close_html = undefined;
 			});
-	
+
 			beforeEach(function () {
 				this.spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
 					modal_node,
@@ -689,7 +689,7 @@ describe('yamodal', function () {
 				});
 				this.cleanup = jsdom(DOCTYPE + HTML(`${this.open_html}${this.close_html}`));
 			});
-	
+
 			afterEach(function () {
 				sinon.restore();
 				this.cleanup();
@@ -750,12 +750,8 @@ describe('yamodal', function () {
 	});
 
 	describe('context', function () {
-		describe('static context', function () {
+		describe('static context', function () {});
 
-		});
-
-		describe('dynamic context', function () {
-
-		});
+		describe('dynamic context', function () {});
 	});
 });
