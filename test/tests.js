@@ -641,10 +641,7 @@ describe('yamodal', function () {
 
 			it('Calling `isOpen()` returns the state of the modal', function () {
 				let template_result = templates.basic();
-				let modal = yamodal({
-					template: templates.basic,
-					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
-				});
+				let modal = yamodal({ template: templates.basic });
 
 				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
 				assert.strictEqual(modal.isOpen(), false);
