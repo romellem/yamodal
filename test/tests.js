@@ -477,6 +477,7 @@ describe('yamodal', function () {
 				});
 
 				let api_keys = Object.keys(modal);
+				let modal_node_descriptor = Object.getOwnPropertyDescriptor(modal, 'modal_node');
 
 				assert.strictEqual(api_keys.length, 5);
 				assert.ok(api_keys.includes('modal_node'));
@@ -487,6 +488,7 @@ describe('yamodal', function () {
 
 				const window = document.defaultView;
 				assert.ok(modal.modal_node instanceof window.HTMLElement);
+				assert.strictEqual(typeof modal_node_descriptor.get, 'function');
 				assert.strictEqual(typeof modal.open, 'function');
 				assert.strictEqual(typeof modal.close, 'function');
 				assert.strictEqual(typeof modal.isOpen, 'function');
