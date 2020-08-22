@@ -673,36 +673,35 @@ describe('yamodal', function () {
 			});
 
 			beforeEach(function () {
-				this.spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
-					modal_node,
-					trigger_node,
-					event
-				) {
-					// Do nothing
-				});
-				this.spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
-					modal_node,
-					trigger_node,
-					event
-				) {
-					// Do nothing
-				});
 				this.cleanup = jsdom(DOCTYPE + HTML(`${this.open_html}${this.close_html}`));
 			});
 
 			afterEach(function () {
-				sinon.restore();
 				this.cleanup();
 			});
 
 			it('Calling `destroy()` removes our click handlers', function () {
 				let template_result = templates.basic();
+				const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
+					modal_node,
+					trigger_node,
+					event
+				) {
+					// Do nothing
+				});
+				const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+					modal_node,
+					trigger_node,
+					event
+				) {
+					// Do nothing
+				});
 				let modal = yamodal({
 					template: templates.basic,
 					trigger_selector: '#open',
 					close_selector: '#close',
-					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
-					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
+					beforeInsertIntoDom: spiedBeforeInsertIntoDom,
+					beforeRemoveFromDom: spiedBeforeRemoveFromDom,
 				});
 
 				let open_button = document.getElementById('open');
@@ -714,8 +713,8 @@ describe('yamodal', function () {
 					global.document.documentElement.outerHTML,
 					HTML(`${this.open_html}${this.close_html}${template_result}`)
 				);
-				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
-				assert.ok(this.spiedBeforeRemoveFromDom.notCalled);
+				assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(spiedBeforeRemoveFromDom.notCalled);
 
 				close_button.click();
 
@@ -723,8 +722,8 @@ describe('yamodal', function () {
 					global.document.documentElement.outerHTML,
 					HTML(`${this.open_html}${this.close_html}`)
 				);
-				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
-				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+				assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(spiedBeforeRemoveFromDom.calledOnce);
 
 				modal.destroy();
 
@@ -734,8 +733,8 @@ describe('yamodal', function () {
 					global.document.documentElement.outerHTML,
 					HTML(`${this.open_html}${this.close_html}`)
 				);
-				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
-				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+				assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(spiedBeforeRemoveFromDom.calledOnce);
 
 				close_button.click();
 
@@ -743,8 +742,60 @@ describe('yamodal', function () {
 					global.document.documentElement.outerHTML,
 					HTML(`${this.open_html}${this.close_html}`)
 				);
-				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
-				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+				assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+				assert.ok(spiedBeforeRemoveFromDom.calledOnce);
+
+				sinon.restore();
+			});
+
+			it('Calling `destroy()` on an open modal closes it', function () {
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+				});
+
+				modal.open();
+
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}${template_result}`)
+				);
+
+				modal.destroy();
+
+				// Need to test the HTML because `destroy` also "no-ops" our `isOpen()` method
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${this.open_html}${this.close_html}`)
+				);
+			});
+
+			it('Calling `destroy()` sets API methods to the same "no ops"', function () {
+				let modal = yamodal({
+					template: templates.basic,
+				});
+
+				modal.destroy();
+
+				assert.strictEqual(modal.open, modal.isOpen);
+				assert.strictEqual(modal.open, modal.close);
+				assert.strictEqual(modal.open, modal.destroy);
+				assert.strictEqual(modal.close, modal.isOpen);
+				assert.strictEqual(modal.close, modal.destroy);
+				assert.strictEqual(modal.destroy, modal.isOpen);
+
+				assert.doesNotThrow(() => modal.open());
+				assert.doesNotThrow(() => modal.close());
+				assert.doesNotThrow(() => modal.isOpen());
+				assert.doesNotThrow(() => modal.destroy());
+
+				assert.strictEqual(modal.open(), undefined);
+				assert.strictEqual(modal.close(), undefined);
+				assert.strictEqual(modal.isOpen(), undefined);
+				assert.strictEqual(modal.destroy(), undefined);
+
+				// `modal_node` isn't no-op'd, but its return value is set to undefined
+				assert.strictEqual(modal.modal_node, undefined);
 			});
 		});
 	});
