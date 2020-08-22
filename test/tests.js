@@ -461,7 +461,7 @@ describe('yamodal', function () {
 	});
 
 	describe('API', function () {
-		describe('Return Object', function () {
+		describe('return object', function () {
 			beforeEach(function () {
 				this.cleanup = jsdom(DOCTYPE + HTML());
 			});
@@ -609,6 +609,16 @@ describe('yamodal', function () {
 				modal.close();
 				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
 			});
+		});
+	});
+
+	describe('context', function () {
+		describe('static context', function () {
+
+		});
+
+		describe('dynamic context', function () {
+
 		});
 	});
 });
