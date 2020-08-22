@@ -1,8 +1,8 @@
-const yamodal = require('../dist/umd/yamodal');
-const assert = require('assert');
-const jsdom = require('global-jsdom');
+import yamodal from '../dist/umd/yamodal';
+import assert from 'assert';
+import jsdom from 'global-jsdom';
 
-const templates = require('./templates.js');
+import * as templates from './templates.js';
 const DOCTYPE = `<!doctype html>`;
 const HTML = (str = '') => `<html><head><meta charset="utf-8"></head><body>${str}</body></html>`;
 
