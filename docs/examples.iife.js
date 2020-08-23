@@ -289,8 +289,12 @@
       if (modal_is_dynamic) {
         modal_node = createModalNode(trigger_node, event); // Always check for the default close selector if none was specified for a dynamic modal
 
-        if (no_close_selector_specified && modal_node.querySelector(default_close_selector)) {
-          close_selector = default_close_selector;
+        if (no_close_selector_specified) {
+          if (modal_node.querySelector(default_close_selector)) {
+            close_selector = default_close_selector;
+          } else {
+            close_selector = undefined;
+          }
         }
       }
 
