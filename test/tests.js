@@ -403,7 +403,7 @@ describe('yamodal', function () {
 			this.cleanup();
 		});
 
-		it('should call `beforeInsertIntoDom` with exactly three arguments', function () {
+		it('should call `beforeInsertIntoDom` with exactly three arguments when the close button is clicked', function () {
 			const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
 				modal_node,
 				trigger_node,
@@ -427,6 +427,33 @@ describe('yamodal', function () {
 			assert.ok(spiedBeforeInsertIntoDom.calledOnce);
 			assert.ok(modal_node instanceof window.HTMLElement);
 			assert.ok(trigger_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+
+		it('should call `beforeInsertIntoDom` with an undefined `trigger_node` when opened via the `open()` api', function () {
+			const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
+				modal_node,
+				trigger_node,
+				event
+			) {
+				// Do nothing
+			});
+			let modal = yamodal({
+				template: templates.basic,
+				beforeInsertIntoDom: spiedBeforeInsertIntoDom,
+			});
+
+			modal.open();
+
+			const window = document.defaultView;
+			let [modal_node, trigger_node, event, ...others] = spiedBeforeInsertIntoDom.getCall(
+				0
+			).args;
+
+			assert.ok(spiedBeforeInsertIntoDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(trigger_node === undefined);
 			assert.ok(event instanceof window.Event);
 			assert.strictEqual(others.length, 0);
 		});
@@ -573,10 +600,141 @@ describe('yamodal', function () {
 
 			// Now closed
 			assert.strictEqual(modal.isOpen(), false);
+			assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+		});
+	});
+
+	describe('beforeRemoveFromDom callback', function () {
+		beforeEach(function () {
+			this.cleanup = jsdom(DOCTYPE + HTML());
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `beforeRemoveFromDom` with exactly three arguments when the close button is clicked', function () {
+			const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+				modal_node,
+				trigger_node,
+				event
+			) {
+				// Do nothing
+			});
+
+			let modal = yamodal({
+				template: templates.basicWithClose,
+				beforeRemoveFromDom: spiedBeforeRemoveFromDom,
+			});
+
+			modal.open();
+
+			assert.ok(spiedBeforeRemoveFromDom.notCalled);
+
+			let button = document.getElementById('close');
+			button.click();
+
+			const window = document.defaultView;
+			let [modal_node, close_node, event, ...others] = spiedBeforeRemoveFromDom.getCall(
+				0
+			).args;
+
+			assert.ok(spiedBeforeRemoveFromDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(close_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+
+		it('should call `beforeRemoveFromDom` with an undefined `close_node` when closed via the `close()` api', function () {
+			const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+				modal_node,
+				trigger_node,
+				event
+			) {
+				// Do nothing
+			});
+
+			let modal = yamodal({
+				template: templates.basicWithClose,
+				beforeRemoveFromDom: spiedBeforeRemoveFromDom,
+			});
+
+			modal.open();
+			modal.close();
+
+			const window = document.defaultView;
+
+			let [modal_node, close_node, event, ...others] = spiedBeforeRemoveFromDom.getCall(
+				0
+			).args;
+
+			assert.ok(spiedBeforeRemoveFromDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(close_node === undefined);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+
+		it('should not open the modal if `beforeRemoveFromDom` returns false', function () {
+			const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+				modal_node,
+				trigger_node,
+				event
+			) {
+				return false;
+			});
+			let template_result = templates.basic();
+			let modal = yamodal({
+				template: templates.basic,
+				beforeRemoveFromDom: spiedBeforeRemoveFromDom,
+			});
+
+			modal.open();
+
+			assert.ok(spiedBeforeRemoveFromDom.notCalled);
+
+			modal.close();
+
+			assert.ok(spiedBeforeRemoveFromDom.calledOnce);
+			assert.strictEqual(modal.isOpen(), true);
 			assert.strictEqual(
 				global.document.documentElement.outerHTML,
-				HTML()
+				HTML(`${template_result}`)
 			);
+		});
+
+		it('should still close the modal if `beforeRemoveFromDom` returns a falsy value different from `false`', function () {
+			// Not including `false` (obviously) and BigInt `0n`
+			const falsy_values = [0, null, undefined, NaN, ''];
+			for (let falsy_value of falsy_values) {
+				this.cleanup = jsdom(DOCTYPE + HTML(this.button_html));
+				const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
+					modal_node,
+					trigger_node,
+					event
+				) {
+					return falsy_value;
+				});
+				let template_result = templates.basic();
+				let modal = yamodal({
+					template: templates.basic,
+					beforeRemoveFromDom: spiedBeforeRemoveFromDom,
+				});
+
+				modal.open();
+				assert.strictEqual(modal.isOpen(), true);
+
+				modal.close();
+
+				assert.ok(spiedBeforeRemoveFromDom.calledOnce);
+				assert.strictEqual(modal.isOpen(), false);
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+
+				this.cleanup();
+				sinon.restore();
+			}
 		});
 	});
 
