@@ -316,30 +316,37 @@ describe('yamodal', function () {
 		});
 
 		it('should use the modal itself when modal does not contain default close selector or is set to `null`', function () {
-			for (let close_selector of [undefined, null]) {
-				const open_html = `<button id="open">x</button>`;
-				this.cleanup = jsdom(DOCTYPE + HTML(open_html));
-				let template_result = templates.basic();
-				yamodal({
-					template: () => template_result,
-					trigger_selector: '#open',
-					close_selector,
-				});
-				let open = document.getElementById('open');
-				open.click();
+			// Also text this with static and dynamic contexts
+			for (let context of [undefined, () => {}]) {
+				for (let close_selector of [undefined, null]) {
+					const open_html = `<button id="open">x</button>`;
+					this.cleanup = jsdom(DOCTYPE + HTML(open_html));
+					let template_result = templates.basic();
+					yamodal({
+						template: () => template_result,
+						trigger_selector: '#open',
+						close_selector,
+						context,
+					});
+					let open = document.getElementById('open');
+					open.click();
 
-				assert.strictEqual(
-					global.document.documentElement.outerHTML,
-					HTML(`${open_html}${template_result}`)
-				);
+					assert.strictEqual(
+						global.document.documentElement.outerHTML,
+						HTML(`${open_html}${template_result}`)
+					);
 
-				let modal = document.getElementById('modal');
-				modal.click();
+					let modal = document.getElementById('modal');
+					modal.click();
 
-				assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${open_html}`));
+					assert.strictEqual(
+						global.document.documentElement.outerHTML,
+						HTML(`${open_html}`)
+					);
 
-				// It's OK that this runs twice
-				this.cleanup();
+					// It's OK that this runs twice
+					this.cleanup();
+				}
 			}
 		});
 	});
@@ -1295,7 +1302,6 @@ describe('yamodal', function () {
 
 				include_close_button = false;
 				modal.open();
-				// console.log(global.document.documentElement.outerHTML)
 				assert.strictEqual(modal.isOpen(), true);
 				assert.ok(spiedContext.calledTwice);
 
