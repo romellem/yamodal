@@ -913,7 +913,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('Getting `modal_node` returns the modal Element', function () {
+			it('getting `modal_node` returns the modal Element', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -941,7 +941,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('Calling `open()` opens the modal', function () {
+			it('calling `open()` opens the modal', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -959,7 +959,7 @@ describe('yamodal', function () {
 				);
 			});
 
-			it('Calling `open()` multiple times does nothing while modal is open', function () {
+			it('calling `open()` multiple times does nothing while modal is open', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
@@ -970,6 +970,19 @@ describe('yamodal', function () {
 
 				modal.open();
 				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
+			});
+
+			it('should allow a custom event to be passed into the `open()` method', function () {
+				let modal = yamodal({
+					template: templates.basic,
+					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
+				});
+
+				let custom_event = createEmptyCustomEvent('placeholder');
+				modal.open(custom_event);
+				let [, , event] = this.spiedBeforeInsertIntoDom.getCall(0).args;
+
+				assert.strictEqual(custom_event, event);
 			});
 		});
 
@@ -990,7 +1003,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('Calling `close()` when the modal is not open does nothing', function () {
+			it('calling `close()` when the modal is not open does nothing', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
@@ -1021,7 +1034,7 @@ describe('yamodal', function () {
 				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
 			});
 
-			it('Calling `close()` multiple times does nothing while modal is closed', function () {
+			it('calling `close()` multiple times does nothing while modal is closed', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
@@ -1036,6 +1049,20 @@ describe('yamodal', function () {
 				modal.close();
 				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
 			});
+
+			it('should allow a custom event to be passed into the `close()` method', function () {
+				let modal = yamodal({
+					template: templates.basic,
+					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
+				});
+
+				let custom_event = createEmptyCustomEvent('placeholder');
+				modal.open();
+				modal.close(custom_event);
+				let [, , event] = this.spiedBeforeRemoveFromDom.getCall(0).args;
+
+				assert.strictEqual(custom_event, event);
+			});
 		});
 
 		describe('isOpen API', function () {
@@ -1047,7 +1074,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('Calling `isOpen()` returns the state of the modal', function () {
+			it('calling `isOpen()` returns the state of the modal', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({ template: templates.basic });
 
@@ -1088,7 +1115,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('Calling `destroy()` removes our click handlers', function () {
+			it('calling `destroy()` removes our click handlers', function () {
 				let template_result = templates.basic();
 				const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
 					modal_node,
@@ -1156,7 +1183,7 @@ describe('yamodal', function () {
 				sinon.restore();
 			});
 
-			it('Calling `destroy()` on an open modal closes it', function () {
+			it('calling `destroy()` on an open modal closes it', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -1178,7 +1205,7 @@ describe('yamodal', function () {
 				);
 			});
 
-			it('Calling `destroy()` sets API methods to the same "no ops"', function () {
+			it('calling `destroy()` sets API methods to the same "no ops"', function () {
 				let modal = yamodal({
 					template: templates.basic,
 				});
