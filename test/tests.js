@@ -533,6 +533,53 @@ describe('yamodal', function () {
 		});
 	});
 
+	describe('remove_modal_after_event_type event type', function () {
+		beforeEach(function () {
+			this.cleanup = jsdom(DOCTYPE + HTML());
+		});
+
+		afterEach(function () {
+			this.cleanup();
+		});
+
+		it('should keep an open modal in the DOM until `remove_modal_after_event_type` has fired', function () {
+			let template_result = templates.basic();
+			let modal = yamodal({
+				template: templates.basic,
+				remove_modal_after_event_type: 'transitionend',
+			});
+
+			modal.open();
+
+			assert.strictEqual(modal.isOpen(), true);
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${template_result}`)
+			);
+
+			modal.close();
+
+			// Still open
+			assert.strictEqual(modal.isOpen(), true);
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML(`${template_result}`)
+			);
+
+			// Trigger a 'transitionend'
+			let transitionend = document.createEvent('HTMLEvents');
+			transitionend.initEvent('transitionend', true, false);
+			modal.modal_node.dispatchEvent(transitionend);
+
+			// Now closed
+			assert.strictEqual(modal.isOpen(), false);
+			assert.strictEqual(
+				global.document.documentElement.outerHTML,
+				HTML()
+			);
+		});
+	});
+
 	describe('API', function () {
 		describe('return object', function () {
 			beforeEach(function () {
