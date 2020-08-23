@@ -1246,6 +1246,66 @@ describe('yamodal', function () {
 				assert.ok(this.spiedContext.calledOnce);
 				assert.ok(spiedTemplate.calledOnceWith(this.random_context_return));
 			});
+
+			it(`should create different modal_node Elements when dynamic context is used`, function () {
+				let modal = yamodal({
+					template: templates.basicWithContext,
+					context: this.spiedContext,
+				});
+
+				modal.open();
+				let modal_node_first = modal.modal_node;
+
+				modal.close();
+
+				modal.open();
+				let modal_node_second = modal.modal_node;
+
+				assert.strictEqual(modal_node_first.outerHTML, modal_node_second.outerHTML);
+				assert.notStrictEqual(modal_node_first, modal_node_second);
+			});
+
+			it(`should attach close listener to modal if dynamic context makes the modal not have the default close selector`, function () {
+				let include_close_button;
+				let spiedContext = sinon.spy(function contextClosure() {
+					if (include_close_button) {
+						// `templates.basicWithClose` has a default close button when called with an undefined context
+						return undefined;
+					} else {
+						return '';
+					}
+				});
+
+				const window = document.defaultView;
+				let modal = yamodal({
+					template: templates.basicWithClose,
+					context: spiedContext,
+				});
+
+				include_close_button = true;
+				modal.open();
+				assert.strictEqual(modal.isOpen(), true);
+				assert.ok(spiedContext.calledOnce);
+
+				// Use default_close_selector
+				let close_button = modal.modal_node.querySelector('[data-modal-close]');
+				assert.ok(close_button instanceof window.HTMLElement);
+				close_button.click();
+				assert.strictEqual(modal.isOpen(), false);
+
+				include_close_button = false;
+				modal.open();
+				// console.log(global.document.documentElement.outerHTML)
+				assert.strictEqual(modal.isOpen(), true);
+				assert.ok(spiedContext.calledTwice);
+
+				let close_button_doesnt_exist = modal.modal_node.querySelector(
+					'[data-modal-close]'
+				);
+				assert.ok(close_button_doesnt_exist === null);
+				modal.modal_node.click();
+				assert.strictEqual(modal.isOpen(), false);
+			});
 		});
 	});
 });
