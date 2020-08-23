@@ -832,6 +832,35 @@ describe('yamodal', function () {
 		});
 	});
 
+	describe('onDestroy callback', function () {
+		beforeEach(function () {
+			this.spiedOnDestroy = sinon.spy(function onDestroy(modal_node) {
+				// Do nothing
+			});
+			this.cleanup = jsdom(DOCTYPE + HTML());
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `onDestroy` when destroying instance', function () {
+			let modal = yamodal({
+				template: templates.basic,
+				onDestroy: this.spiedOnDestroy,
+			});
+
+			// Save the modal_node to compare it in our spy later
+			let modal_node = modal.modal_node;
+
+			assert.ok(this.spiedOnDestroy.notCalled);
+			modal.destroy();
+
+			assert.ok(this.spiedOnDestroy.calledOnceWithExactly(modal_node));
+		});
+	});
+
 	describe('API', function () {
 		describe('return object', function () {
 			beforeEach(function () {
