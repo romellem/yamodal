@@ -677,7 +677,7 @@ describe('yamodal', function () {
 			assert.strictEqual(others.length, 0);
 		});
 
-		it('should not open the modal if `beforeRemoveFromDom` returns false', function () {
+		it('should not close the modal if `beforeRemoveFromDom` returns false', function () {
 			const spiedBeforeRemoveFromDom = sinon.spy(function beforeRemoveFromDom(
 				modal_node,
 				trigger_node,
@@ -735,6 +735,69 @@ describe('yamodal', function () {
 				this.cleanup();
 				sinon.restore();
 			}
+		});
+	});
+
+	describe('afterRemoveFromDom callback', function () {
+		beforeEach(function () {
+			this.spiedAfterRemoveFromDom = sinon.spy(function afterRemoveFromDom(
+				modal_node,
+				trigger_node,
+				event
+			) {
+				// Do nothing
+			});
+			this.cleanup = jsdom(DOCTYPE + HTML());
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `afterRemoveFromDom` with exactly three arguments when the close button is clicked', function () {
+			let modal = yamodal({
+				template: templates.basicWithClose,
+				afterRemoveFromDom: this.spiedAfterRemoveFromDom,
+			});
+
+			modal.open();
+
+			let button = document.getElementById('close');
+			button.click();
+
+			const window = document.defaultView;
+			let [modal_node, close_node, event, ...others] = this.spiedAfterRemoveFromDom.getCall(
+				0
+			).args;
+
+			assert.ok(this.spiedAfterRemoveFromDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(close_node instanceof window.HTMLElement);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
+		});
+
+		it('should call `beforeRemoveFromDom` with an undefined `close_node` when closed via the `close()` api', function () {
+			let modal = yamodal({
+				template: templates.basicWithClose,
+				afterRemoveFromDom: this.spiedAfterRemoveFromDom,
+			});
+
+			modal.open();
+			modal.close();
+
+			const window = document.defaultView;
+
+			let [modal_node, close_node, event, ...others] = this.spiedAfterRemoveFromDom.getCall(
+				0
+			).args;
+
+			assert.ok(this.spiedAfterRemoveFromDom.calledOnce);
+			assert.ok(modal_node instanceof window.HTMLElement);
+			assert.ok(close_node === undefined);
+			assert.ok(event instanceof window.Event);
+			assert.strictEqual(others.length, 0);
 		});
 	});
 
