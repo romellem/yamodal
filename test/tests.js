@@ -801,6 +801,37 @@ describe('yamodal', function () {
 		});
 	});
 
+	describe('onAfterSetup callback', function () {
+		beforeEach(function () {
+			this.spiedOnAfterSetup = sinon.spy(function onAfterSetup(modal_node, api) {
+				// Do nothing
+			});
+			this.cleanup = jsdom(DOCTYPE + HTML());
+		});
+
+		afterEach(function () {
+			sinon.restore();
+			this.cleanup();
+		});
+
+		it('should call `onAfterSetup` with exactly two arguments', function () {
+			let modal = yamodal({
+				template: templates.basic,
+				onAfterSetup: this.spiedOnAfterSetup,
+			});
+
+			assert.ok(this.spiedOnAfterSetup.calledOnce);
+			const window = document.defaultView;
+			let [modal_node, api, ...others] = this.spiedOnAfterSetup.getCall(0).args;
+
+			assert.ok(modal_node instanceof window.HTMLElement);
+
+			// The `api` is the same as the return object
+			assert.strictEqual(modal, api);
+			assert.strictEqual(others.length, 0);
+		});
+	});
+
 	describe('API', function () {
 		describe('return object', function () {
 			beforeEach(function () {
