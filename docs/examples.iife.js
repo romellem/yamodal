@@ -381,11 +381,11 @@
       },
 
       open: function open() {
-        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.open');
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('open.yamodal');
         return onTriggerOpen(event);
       },
       close: function close() {
-        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.close');
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('close.yamodal');
         return onTriggerClose(event);
       },
       isOpen: function isOpen() {

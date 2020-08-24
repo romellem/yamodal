@@ -210,10 +210,10 @@ const initializeModalListener = ({
 		get modal_node() {
 			return modal_node;
 		},
-		open(event = createEmptyCustomEvent('yamodal.open')) {
+		open(event = createEmptyCustomEvent('open.yamodal')) {
 			return onTriggerOpen(event);
 		},
-		close(event = createEmptyCustomEvent('yamodal.close')) {
+		close(event = createEmptyCustomEvent('close.yamodal')) {
 			return onTriggerClose(event);
 		},
 		isOpen() {
