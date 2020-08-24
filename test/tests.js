@@ -878,7 +878,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('`yamodal()` returns an object with all API elements', function () {
+			it('should return an object with all API elements', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
@@ -913,7 +913,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('getting `modal_node` returns the modal Element', function () {
+			it('should have `modal_node` getter', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -941,7 +941,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('calling `open()` opens the modal', function () {
+			it('should open the modal when `open()` is called', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -959,7 +959,7 @@ describe('yamodal', function () {
 				);
 			});
 
-			it('calling `open()` multiple times does nothing while modal is open', function () {
+			it('should open the modal only once when `open()` is called multiple times', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
@@ -1015,7 +1015,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('calling `close()` when the modal is not open does nothing', function () {
+			it('should do nothing when `close()` is called on a closed modal', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
@@ -1025,7 +1025,7 @@ describe('yamodal', function () {
 				assert.ok(this.spiedBeforeRemoveFromDom.notCalled);
 			});
 
-			it('calling `close()` closes the open modal', function () {
+			it('should close an open modal when `close()` is called', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -1046,7 +1046,7 @@ describe('yamodal', function () {
 				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
 			});
 
-			it('calling `close()` multiple times does nothing while modal is closed', function () {
+			it('should close the modal only once when `close()` is called multiple times', function () {
 				let modal = yamodal({
 					template: templates.basic,
 					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
@@ -1099,7 +1099,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('calling `isOpen()` returns the state of the modal', function () {
+			it('should return the state of the modal when `isOpen()` is called', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({ template: templates.basic });
 
@@ -1140,7 +1140,7 @@ describe('yamodal', function () {
 				this.cleanup();
 			});
 
-			it('calling `destroy()` removes our click handlers', function () {
+			it('should remove our click handlers when `destroy()` is called', function () {
 				let template_result = templates.basic();
 				const spiedBeforeInsertIntoDom = sinon.spy(function beforeInsertIntoDom(
 					modal_node,
@@ -1208,7 +1208,7 @@ describe('yamodal', function () {
 				sinon.restore();
 			});
 
-			it('calling `destroy()` on an open modal closes it', function () {
+			it('should close an open modal when `destroy()` is called', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -1230,7 +1230,7 @@ describe('yamodal', function () {
 				);
 			});
 
-			it('calling `destroy()` sets API methods to the same "no ops"', function () {
+			it('should sets API methods to the same "no ops" when `destroy()` is called', function () {
 				let modal = yamodal({
 					template: templates.basic,
 				});
