@@ -972,6 +972,18 @@ describe('yamodal', function () {
 				assert.ok(this.spiedBeforeInsertIntoDom.calledOnce);
 			});
 
+			it('should use a default event when `open()` is called', function () {
+				let modal = yamodal({
+					template: templates.basic,
+					beforeInsertIntoDom: this.spiedBeforeInsertIntoDom,
+				});
+
+				modal.open();
+				let [, , event] = this.spiedBeforeInsertIntoDom.getCall(0).args;
+
+				assert.strictEqual(event.type, 'open.yamodal');
+			});
+
 			it('should allow a custom event to be passed into the `open()` method', function () {
 				let modal = yamodal({
 					template: templates.basic,
@@ -1013,7 +1025,7 @@ describe('yamodal', function () {
 				assert.ok(this.spiedBeforeRemoveFromDom.notCalled);
 			});
 
-			it('Calling `close()` closes the open modal', function () {
+			it('calling `close()` closes the open modal', function () {
 				let template_result = templates.basic();
 				let modal = yamodal({
 					template: templates.basic,
@@ -1048,6 +1060,19 @@ describe('yamodal', function () {
 
 				modal.close();
 				assert.ok(this.spiedBeforeRemoveFromDom.calledOnce);
+			});
+
+			it('should use a default event when `close()` is called', function () {
+				let modal = yamodal({
+					template: templates.basic,
+					beforeRemoveFromDom: this.spiedBeforeRemoveFromDom,
+				});
+
+				modal.open();
+				modal.close();
+				let [, , event] = this.spiedBeforeRemoveFromDom.getCall(0).args;
+
+				assert.strictEqual(event.type, 'close.yamodal');
 			});
 
 			it('should allow a custom event to be passed into the `close()` method', function () {
