@@ -1261,7 +1261,45 @@ describe('yamodal', function () {
 	});
 
 	describe('context', function () {
-		describe('static context', function () {});
+		describe('static context', function () {
+			beforeEach(function () {
+				this.cleanup = jsdom(DOCTYPE + HTML());
+			});
+
+			afterEach(function () {
+				this.cleanup();
+			});
+
+			it(`should allow static context passed in to the same template`, function () {
+				let hello = templates.basicWithContext('hello');
+				let world = templates.basicWithContext('world');
+				let modal_hello = yamodal({
+					template: templates.basicWithContext,
+					context: 'hello',
+				});
+				let modal_world = yamodal({
+					template: templates.basicWithContext,
+					context: 'world',
+				});
+
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+
+				modal_hello.open();
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${hello}`));
+
+				modal_world.open();
+				assert.strictEqual(
+					global.document.documentElement.outerHTML,
+					HTML(`${hello}${world}`)
+				);
+
+				modal_hello.close();
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML(`${world}`));
+
+				modal_world.close();
+				assert.strictEqual(global.document.documentElement.outerHTML, HTML());
+			});
+		});
 
 		describe('dynamic context', function () {
 			beforeEach(function () {
@@ -1274,7 +1312,7 @@ describe('yamodal', function () {
 			});
 
 			afterEach(function () {
-				this.random_context_return;
+				this.random_context_return = undefined;
 				sinon.restore();
 				this.cleanup();
 			});
