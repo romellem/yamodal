@@ -463,7 +463,7 @@
   };
 
   var template$9 = function template(event) {
-    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'yamodal.open' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
+    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'open.yamodal' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
   initializeModalListener({
