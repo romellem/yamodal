@@ -223,7 +223,7 @@ yamodal({
 
 ```js
 yamodal({
-    template: event => `<div>This was opened via ${event.type === 'yamodal.open' ? 'the open() API' : 'a click'}</div>`,
+    template: event => `<div>This was opened via ${event.type === 'open.yamodal' ? 'the open() API' : 'a click'}</div>`,
     context(trigger_node, event) {
         return event;
     },
@@ -537,7 +537,7 @@ _Type:_ `Function`
 
 When `isOpen()` is run, it returns `true` if the current modal is open, `false` if otherwise.
 
-#### Return `open(event = new CustomEvent('yamodal.open'))`
+#### Return `open(event = new CustomEvent('open.yamodal'))`
 
 _Type:_ `Function`
 
@@ -546,7 +546,7 @@ This means that any `beforeInsertIntoDom`, `onAppend`, or `afterInsertIntoDom`
 functions will also run.
 
 Since usually the modal is opened by a click event, programmatic openings have a
-"placeholder" event passed in. This event will have a type of `'yamodal.open'`.
+"placeholder" event passed in. This event will have a type of `'open.yamodal'`.
 Optionally, you can send your own custom event to the open handler.
 
 ```js
@@ -555,7 +555,7 @@ var my_modal = yamodal({ ... });
 setTimeout(() => my_modal.open(), 1000);
 ```
 
-#### Return `close(event = new CustomEvent('yamodal.close'))`
+#### Return `close(event = new CustomEvent('close.yamodal'))`
 
 _Type:_ `Function`
 
@@ -563,7 +563,7 @@ When `close()` is run it triggers the same handler that runs when a close elemen
 This means that any `beforeRemoveFromDom`, or `afterRemoveFromDom` functions will also run.
 
 Since the modal is usually closed by a click event, programmatic closings have a
-"placeholder" event passed in. This event will have a type of `'yamodal.close'`.
+"placeholder" event passed in. This event will have a type of `'close.yamodal'`.
 Optionally, you can send your own custom event to the close handler.
 
 #### Return `destroy()`

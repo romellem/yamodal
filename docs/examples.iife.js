@@ -289,8 +289,12 @@
       if (modal_is_dynamic) {
         modal_node = createModalNode(trigger_node, event); // Always check for the default close selector if none was specified for a dynamic modal
 
-        if (no_close_selector_specified && modal_node.querySelector(default_close_selector)) {
-          close_selector = default_close_selector;
+        if (no_close_selector_specified) {
+          if (modal_node.querySelector(default_close_selector)) {
+            close_selector = default_close_selector;
+          } else {
+            close_selector = undefined;
+          }
         }
       }
 
@@ -377,11 +381,11 @@
       },
 
       open: function open() {
-        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.open');
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('open.yamodal');
         return onTriggerOpen(event);
       },
       close: function close() {
-        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('yamodal.close');
+        var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : createEmptyCustomEvent('close.yamodal');
         return onTriggerClose(event);
       },
       isOpen: function isOpen() {
@@ -459,7 +463,7 @@
   };
 
   var template$9 = function template(event) {
-    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'yamodal.open' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
+    return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'open.yamodal' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
   initializeModalListener({
