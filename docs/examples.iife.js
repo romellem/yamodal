@@ -426,54 +426,54 @@
     return rtn_object;
   };
 
-  var template = function template() {
+  var template$9 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        I animate in! <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$1 = function template() {
+  var template$8 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        Basic Modal\n    </div>\n</div>";
   };
 
-  var template$2 = function template() {
+  var template$7 = function template() {
     return "\n<div\n    class=\"overlay\"\n    style=\"\n        transition: opacity 0.5s;\n        opacity: 0;\n    \"\n>\n    <div class=\"modal\">\n        I fade in/out! <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$3 = function template() {
+  var template$6 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div style=\"overflow: auto; max-height: 100%\">\n            <p>This modal can be scrolled, while the background is scroll&nbsp;locked.</p>\n            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Arcu dictum varius duis at consectetur. Eget nunc scelerisque viverra mauris in aliquam sem fringilla. Vivamus at augue eget arcu dictum varius. Sed felis eget velit aliquet sagittis id. Quis commodo odio aenean sed adipiscing diam donec adipiscing. At consectetur lorem donec massa sapien faucibus et. Lacus viverra vitae congue eu. In hendrerit gravida rutrum quisque. Sagittis id consectetur purus ut faucibus pulvinar. Scelerisque purus semper eget duis at tellus at. Eu ultrices vitae auctor eu augue ut lectus arcu. Quis enim lobortis scelerisque fermentum dui faucibus in ornare quam. In hac habitasse platea dictumst quisque. Odio facilisis mauris sit amet massa vitae tortor condimentum. Sed turpis tincidunt id aliquet. A erat nam at lectus urna duis convallis convallis. Adipiscing tristique risus nec feugiat in fermentum. Pellentesque dignissim enim sit amet venenatis urna cursus.</p>\n            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa natus, praesentium id, earum quod nemo eligendi nulla autem beatae consequuntur quo recusandae inventore, facilis odit blanditiis deleniti delectus explicabo. Illo.</p>\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$4 = function template() {
+  var template$5 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        Click outside this modal to close.\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$5 = function template() {
+  var template$4 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <span>Press <kbd>ESC</kbd> to close</span>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$6 = function template() {
+  var template$3 = function template() {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <span>I open automatically when <a href=\"#open\">#open</a> is present in the URL on load.</span>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>";
   };
 
-  var template$7 = function template(context) {
+  var template$2 = function template(context) {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n            This value was dynamically loaded via <code>context</code>:\n            <ul><li>".concat(context, "</li></ul>\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
-  var template$8 = function template(href) {
+  var template$1 = function template(href) {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n            Continue to <strong>".concat(href, "</strong>?\n            <br>\n            <a href=\"").concat(href, "\">Yes</a> | <a href=\"javascript:void(0)\" data-modal-close>No</a>\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
-  var template$9 = function template(event) {
+  var template = function template(event) {
     return "\n<div class=\"overlay\">\n    <div class=\"modal\">\n        <div>\n        This modal was opened via ".concat(event.type === 'open.yamodal' ? 'the <code>open()</code> API' : 'a click', "\n        </div>\n        <button data-modal-close>\xD7</button>\n    </div>\n</div>");
   };
 
   initializeModalListener({
-    template: template$1,
+    template: template$8,
     trigger_selector: '[data-modal-trigger="basic"]'
   }); // Fade in / Fade out
   // @see https://gist.github.com/paulirish/5d52fb081b3570c81e3a for an explanation of the `void modal_node.clientHeight` expressions.
 
   initializeModalListener({
-    template: template$2,
+    template: template$7,
     trigger_selector: '[data-modal-trigger="fade"]',
     remove_modal_after_event_type: 'transitionend',
     afterInsertIntoDom: function afterInsertIntoDom(modal_node) {
@@ -487,7 +487,7 @@
   }); // Animate in
 
   initializeModalListener({
-    template: template,
+    template: template$9,
     trigger_selector: '[data-modal-trigger="animation"]',
     // Technically the inner modal has the animation but this event bubbles up so this works
     remove_modal_after_event_type: 'animationend',
@@ -504,7 +504,7 @@
   }); // Body scroll lock
 
   initializeModalListener({
-    template: template$3,
+    template: template$6,
     trigger_selector: '[data-modal-trigger="scroll-lock"]',
     afterInsertIntoDom: function afterInsertIntoDom() {
       document.body.style.overflow = 'hidden';
@@ -516,7 +516,7 @@
 
   var click_outside_inner_node, closeModalOnClickOutside;
   initializeModalListener({
-    template: template$4,
+    template: template$5,
     trigger_selector: '[data-modal-trigger="click-outside"]',
     afterInsertIntoDom: function afterInsertIntoDom(modal_node, trigger_node, e) {
       // When opening the modal, stop it from immediately closing
@@ -542,7 +542,7 @@
 
   var closeModalOnEscPress;
   initializeModalListener({
-    template: template$5,
+    template: template$4,
     trigger_selector: '[data-modal-trigger="close-on-esc"]',
     onAfterSetup: function onAfterSetup(modal_node, _ref2) {
       var isOpen = _ref2.isOpen,
@@ -564,7 +564,7 @@
   }); // Automatically open modal on some condition (checking a hash param)
 
   initializeModalListener({
-    template: template$6,
+    template: template$3,
     trigger_selector: '[data-modal-trigger="auto-open-on-hash-param"]',
     onAfterSetup: function onAfterSetup(modal_node, _ref3) {
       var open = _ref3.open;
@@ -582,7 +582,7 @@
   }); // Modal with dynamic context
 
   initializeModalListener({
-    template: template$7,
+    template: template$2,
     trigger_selector: '[data-modal-trigger="dynamic-context"]',
     context: function context() {
       return Math.random();
@@ -590,7 +590,7 @@
   }); // Link with an interstitial
 
   initializeModalListener({
-    template: template$8,
+    template: template$1,
     trigger_selector: '[data-modal-trigger="interstitial"]',
     beforeInsertIntoDom: function beforeInsertIntoDom(modal_node, trigger_node, event) {
       event.preventDefault();
@@ -601,7 +601,7 @@
   }); // Reading the custom `event` that is passed when `open()` is called
 
   var modal = initializeModalListener({
-    template: template$9,
+    template: template,
     trigger_selector: '[data-modal-trigger="dynamic-context-reading-event"]',
     context: function context(trigger_node, event) {
       return event;
