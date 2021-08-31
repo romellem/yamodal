@@ -1,6 +1,6 @@
 {
   "name": "@designory/yamodal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Yet Another Modal",
   "main": "dist/umd/yamodal.js",
   "module": "dist/esm/yamodal.esm.js",
